@@ -1,0 +1,101 @@
+@import "antd/dist/reset.css";
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500&display=swap");
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: theme("borderColor.DEFAULT", currentColor); /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: "";
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: #f4f5f7;
+  width: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+.fade-appear-active {
+  opacity: 1;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+/* text small */
+.text-small {
+  font-size: 12px;
+  font-weight: 400;
+}
+.text-small-medium {
+  font-size: 12px;
+  font-weight: 500;
+}
+.text-small-semibold {
+  font-size: 12px;
+  font-weight: 600;
+}
+.text-small-bold {
+  font-size: 12px;
+  font-weight: 700;
+}
+/* text medium */
+.text-medium {
+  font-size: 16px;
+  font-weight: 400;
+}
+.text-medium-medium {
+  font-size: 16px;
+  font-weight: 500;
+}
+.text-medium-semibold {
+  font-size: 16px;
+  font-weight: 600;
+}
+.text-medium-bold {
+  font-size: 16px;
+  font-weight: 700;
+}
+/* text large */
+.text-large {
+  font-size: 18px;
+  font-weight: 400;
+}
+.text-large-medium {
+  font-size: 18px;
+  font-weight: 500;
+}
+.text-large-semibold {
+  font-size: 18px;
+  font-weight: 600;
+}
+.text-large-bold {
+  font-size: 18px;
+  font-weight: 700;
+}

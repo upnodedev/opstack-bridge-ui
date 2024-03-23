@@ -1,0 +1,3 @@
+interface LayoutState {
+  sidebarOpen: boolean;
+}

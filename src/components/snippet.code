@@ -1,0 +1,28 @@
+// TypeScript React Component with Styled-Components Snippet
+{
+  "resc": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "resc",
+    "body": [
+      "import styled from 'styled-components';",
+      "",
+      "interface Props extends SimpleComponent {}",
+      "",
+      "const ${1:${TM_FILENAME_BASE/(.+)/${1:/pascalcase}/}}Wrapper = styled.div``;",
+      "",
+      "function ${1:${TM_FILENAME_BASE/(.+)/${1:/pascalcase}/}}(props: Props) {",
+      "  return (",
+      "    <${1:${TM_FILENAME_BASE/(.+)/${1:/pascalcase}/}}Wrapper>",
+      "      <div className=\"\">",
+      "        ",
+      "      </div>",
+      "    </${1:${TM_FILENAME_BASE/(.+)/${1:/pascalcase}/}}Wrapper>",
+      "  );",
+      "}",
+      "",
+      "export default ${1:${TM_FILENAME_BASE/(.+)/${1:/pascalcase}/}};",
+      "",
+    ],
+    "description": "TypeScript React Component with Styled-Components"
+  }
+}
