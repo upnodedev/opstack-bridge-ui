@@ -1,4 +1,5 @@
-import type { EnsPublicActions as ENS } from '@ensdomains/ensjs';
+export * from "./Chain";
+import type { EnsPublicActions as ENS } from "@ensdomains/ensjs";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export type bytes32 = `0x${string}`;
@@ -16,4 +17,5 @@ export type ReturnedENS = {
   [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>>;
 };
 
-export const emptyAddress = '0x0000000000000000000000000000000000000000' as AddressType;
+export const emptyAddress =
+  "0x0000000000000000000000000000000000000000" as AddressType;

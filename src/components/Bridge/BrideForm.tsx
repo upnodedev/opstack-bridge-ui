@@ -1,7 +1,7 @@
+import { TokenItemType, tokenList } from "@configs/tokenList";
+import { useState } from "react";
 import styled from "styled-components";
 import CryptoSelect from "./CryptoSelect";
-import { useState } from "react";
-import { TokenItemType, tokenList } from "@configs/tokenList";
 
 interface Props extends SimpleComponent {}
 
@@ -16,7 +16,12 @@ function BrideForm(props: Props) {
 
   return (
     <BrideFormWrapper className="flex w-full items-center justify-between">
-      <b className="text-2xl">Select Token</b>
+      <div>
+        <b className="text-2xl">Select destination chain</b>
+        <h5 className=" font text-[#475467]">
+          Native bridging contracts from OP Stack
+        </h5>
+      </div>
       <CryptoSelect value={token} onChange={handleTokenChange} />
     </BrideFormWrapper>
   );
