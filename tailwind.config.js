@@ -2,6 +2,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     colors: ({ colors }) => ({
       primary: {
@@ -13,6 +14,8 @@ export default {
       tertiary: {
         DEFAULT: '#A62C8A',
       },
+      "gray-dark": "#D0D5DD",
+      "gray-light": "#F9FAFB",
       ...colors,
     }),
     fontFamily: {
