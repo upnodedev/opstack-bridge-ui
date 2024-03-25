@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { Icon } from "@iconify/react";
 import BrideForm from "@components/Bridge/BrideForm";
 import CryptoSelect from "@components/Bridge/CryptoSelect";
 import { useState } from "react";
 import { TokenItemType, tokenList } from "@configs/tokenList";
+import styled from "styled-components";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface Props extends SimpleComponent {}
 

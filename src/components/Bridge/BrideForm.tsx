@@ -1,6 +1,6 @@
+import { useState } from "react";
 import styled from "styled-components";
 import CryptoSelect from "./CryptoSelect";
-import { useState } from "react";
 import { TokenItemType, tokenList } from "@configs/tokenList";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
