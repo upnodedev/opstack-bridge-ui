@@ -1,5 +1,9 @@
+import SearchBox from "@components/SearchBox";
 import { TokenItemType, tokenList } from "@configs/tokenList";
 import { Icon } from "@iconify/react";
+import { useAppDispatch } from "@states/hooks";
+import { ModalSlide } from "@states/modal/reducer";
+import { Modal } from "antd";
 import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
@@ -13,11 +17,60 @@ interface Props extends SimpleComponent {
 const CryptoSelectWrapper = styled.div``;
 
 function CryptoSelect(props: Props) {
-  const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const dispatch = useAppDispatch();
 
-  const toggle = () => {
-    setOpen(!open);
+  const openCryptoModal = () => {
+    dispatch(
+      ModalSlide.actions.openModal({
+        component: <CryptoSelectModal {...props} />,
+      }),
+    );
+  };
+
+  return (
+    <CryptoSelectWrapper className="relative flex justify-center">
+      <button
+        onClick={openCryptoModal}
+        className={`flex cursor-pointer items-center justify-center rounded-full bg-primary px-4 py-2 font-bold text-black transition-all hover:opacity-80 
+        ${props.small ? "text-md" : "text-lg"}`}
+      >
+        <div
+          className={`flex bg-white ${props.small ? "h-6 w-6" : "h-8 w-8"} items-center justify-center rounded-full p-1`}
+        >
+          <img
+            src={`${props.value.image}`}
+            alt="btc"
+            className="h-full w-full object-contain"
+          />
+        </div>
+        <div className="mx-2 h-6 w-[1.5px] bg-white"></div>
+        <span>{props.value.fullName.toUpperCase()}</span>
+        <Icon icon={"akar-icons:chevron-down"} className="ml-2" />
+      </button>
+    </CryptoSelectWrapper>
+  );
+}
+
+function CryptoSelectModal(props: Props) {
+  const [search, setSearch] = useState("");
+  const dispatch = useAppDispatch();
+
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
+  const handleOk = () => {
+    closed();
+  };
+
+  const handleCancel = () => {
+    closed();
+  };
+
+  const closed = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      dispatch(ModalSlide.actions.closeModal());
+    }, 500);
   };
 
   const ItemOption = (
@@ -26,55 +79,49 @@ function CryptoSelect(props: Props) {
     onClick: (token: TokenItemType) => void,
   ) => {
     return (
-      <li
+      <div
         key={token.name}
-        onClick={() => {
-          onClick(token);
-          toggle();
-        }}
-        className={`bg-gray-300 text-black hover:bg-primary fade-in flex 
-        cursor-pointer items-center justify-center rounded-full px-4 py-2 
-        ${props.small ? 'text-md' : 'text-lg'}
-        font-bold transition-all`}
+        className={`flex w-full cursor-pointer items-center border-b-[1px] border-transparent
+         px-2 py-2 text-black hover:border-b-gray-dark hover:bg-gray-light
+        ${props.small ? "text-lg" : "text-lg"}
+        justify-between font-bold transition-all`}
       >
-        <div className={`bg-white mr-4 flex ${props.small ? 'h-6 w-6' : 'h-8 w-8'} items-center justify-center rounded-full p-1`}>
-          <img
-            src={`${token.image}`}
-            alt={token.name}
-            className="h-full w-full object-contain"
-          />
+        <div className="flex items-center">
+          <div
+            className={`mr-4 flex bg-white ${props.small ? "h-8 w-8" : "h-8 w-8"} items-center justify-center rounded-full p-1`}
+          >
+            <img
+              src={`${token.image}`}
+              alt={token.name}
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <span>{token.fullName.toUpperCase()}</span>
         </div>
-        <span>{token.fullName.toUpperCase()}</span>
-      </li>
+
+        <p className="text-md text-gray-dark">0.11</p>
+      </div>
     );
   };
 
   return (
-    <CryptoSelectWrapper className="relative flex justify-center">
-      <button
-        onClick={toggle}
-        className={`bg-primary text-black flex cursor-pointer items-center justify-center rounded-full px-4 py-2 font-bold transition-all hover:opacity-80 
-        ${props.small ? 'text-md' : 'text-lg'}`}
-      >
-        <div className={`bg-white flex ${props.small ? 'h-6 w-6' : 'h-8 w-8'} items-center justify-center rounded-full p-1`}>
-          <img
-            src={`${props.value.image}`}
-            alt="btc"
-            className="h-full w-full object-contain"
-          />
-        </div>
-        <div className="bg-white mx-2 h-6 w-[1.5px]"></div>
-        <span>{props.value.fullName.toUpperCase()}</span>
-        <Icon icon={"akar-icons:chevron-down"} className="ml-2" />
-      </button>
-      <CSSTransition in={open} timeout={300} classNames="fade" unmountOnExit>
-        <ul className="absolute z-10 top-full mt-2 grid gap-2">
+    <Modal
+      open={isModalOpen}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={[]}
+    >
+      <div className="flex flex-col gap-4">
+        <b className="text-2xl">Select Token</b>
+        <SearchBox />
+
+        <div className="w-full gap-1">
           {tokenList.map((token, index) => {
             return ItemOption(token, index, props.onChange);
           })}
-        </ul>
-      </CSSTransition>
-    </CryptoSelectWrapper>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

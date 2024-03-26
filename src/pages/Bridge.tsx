@@ -40,10 +40,6 @@ function Bridge(props: Props) {
     );
   };
 
-  useEffect(() => {
-    reviewDeposit();
-  });
-
   return (
     <BridgeWrapper className="grid w-full grid-cols-5 gap-4 py-8">
       <div className="col-span-3">
@@ -68,7 +64,7 @@ function Bridge(props: Props) {
             <div className="mt-4 w-full">
               <ButtonStyled
                 className="w-full"
-                onClick={() => {}}
+                onClick={reviewDeposit}
                 disabled={false}
               >
                 Review deposit
