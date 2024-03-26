@@ -35,7 +35,7 @@ export default function Navbar() {
                 <span>Home</span>
               </Link>
               <Link
-                to="/domain"
+                to="/bridge"
                 style={{ textDecoration: "none", color: "black" }}
               >
                 <span>Bridge</span>

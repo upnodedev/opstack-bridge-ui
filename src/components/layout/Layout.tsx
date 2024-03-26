@@ -20,7 +20,7 @@ export default function Layout({ children }: AppProps) {
     <div className="relative min-h-screen">
       <Navbar></Navbar>
 
-      <div className="mx-auto max-w-6xl w-full pt-24">{children}</div>
+      <div className="mx-auto max-w-5xl w-full pt-24">{children}</div>
     </div>
   );
 }

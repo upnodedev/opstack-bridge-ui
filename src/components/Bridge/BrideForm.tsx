@@ -14,7 +14,7 @@ const BrideFormWrapper = styled.div``;
 function BrideForm(props: Props) {
   return (
     <BrideFormWrapper>
-      <div className="w-full p-4 rounded-xl border-[1px] border-gray-dark focus:bg-gray-light hover:bg-gray-light transition-all">
+      <div className="w-full p-4 rounded-xl bg-gray-light bg-gray-light transition-all">
         <div className="flex w-full justify-between">
           <div className="flex items-center gap-2">
             <Icon icon={"gg:arrow-up-o"} className="text-2xl" />
