@@ -84,7 +84,6 @@ function BrideForm({
             onTokenChange={onTokenChange}
           />
           <div className="flex items-center">
-            <span className="mr-2 text-sm text-gray-dark">$300</span>
             <input
               className={`${validationError ? "outline-solid outline-red-500" : ""} 
               w-[180px] rounded-xl border-0 py-1 text-right text-2xl font-bold text-black outline-none`}

@@ -24,6 +24,8 @@ import {
 import BrideDepositReviewModal from "./BrideDepositReviewModal";
 import { useReadBalance } from "@hooks/useReadBalance";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useUsdtPrice } from "@hooks/useUsdtPrice";
+import { formatNumberStringComma } from "@utils/utils";
 
 export type ReviewDepositDialogProps = {
   l1: Chain;
@@ -150,6 +152,10 @@ function BridgeReviewDeposit({
     selectedToken: l2Token,
   });
 
+  const usdtPriceFetch = useUsdtPrice(l2Token.symbol);
+  const usdtPrice = usdtPriceFetch
+    ? usdtPriceFetch * +formatUnits(txData.amount, l1Token.decimals)
+    : 0;
 
   return (
     <BridgeReviewDepositWrapper>
@@ -163,7 +169,12 @@ function BridgeReviewDeposit({
         </div>
         <div className="flex w-full justify-between">
           <span>You will recieve</span>
-          <b>{formatUnits(txData.amount, l1Token.decimals)} {l1Token.symbol} ($3.95)</b>
+          <b>
+            {formatUnits(txData.amount, l1Token.decimals)} {l1Token.symbol}{" "}
+            {+usdtPrice
+              ? `(${formatNumberStringComma(+usdtPrice.toFixed(2))} $)`
+              : ""}
+          </b>
         </div>
 
         <div className="flex w-full justify-between">

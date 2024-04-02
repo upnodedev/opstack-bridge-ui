@@ -78,7 +78,7 @@ function ButtonStyled({
     }
   };
 
-  console.log({ className });
+  // console.log({ className });
 
   return (
     <ButtonStyledWrapper
