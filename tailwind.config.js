@@ -14,7 +14,8 @@ export default {
       tertiary: {
         DEFAULT: '#A62C8A',
       },
-      "gray-dark": "#D0D5DD",
+      "gray-dark": "#8c8c8c",
+      "gray-medium": "#4C4E64AD",
       "gray-light": "#F9FAFB",
       ...colors,
     }),

@@ -53,8 +53,8 @@ export const networkPairsByGroup: NetworkPairGroup = {
     sepolia: [sepolia, zoraSepolia],
   },
   quicknodeOpSepolia: {
-    mainnet: [mainnet, optimism],
-    sepolia: [quicknodeETHSepolia, quicknodeoptimismSepolia],
+    mainnet: [quicknodeETHSepolia, quicknodeoptimismSepolia],
+    // sepolia: [quicknodeETHSepolia, quicknodeoptimismSepolia],
   },
 }
 

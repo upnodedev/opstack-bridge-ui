@@ -1,5 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit';
-import reducers from './reducers';
+import { configureStore } from "@reduxjs/toolkit";
+import reducers from "./reducers";
 import {
   FLUSH,
   PAUSE,
@@ -9,13 +9,14 @@ import {
   REHYDRATE,
   persistReducer,
   persistStore,
-} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { closeModal, openModal } from "./modal/reducer";
 
-const PERSISTED_KEYS: string[] = ['profile', 'counter', 'layout'];
+const PERSISTED_KEYS: string[] = ["profile", "counter", "layout"];
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   whitelist: PERSISTED_KEYS,
   storage,
   // stateReconciler: false,
@@ -25,28 +26,40 @@ const DEV = import.meta.env.DEV;
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
-function makeStore(preloadedState = undefined) {
-  return configureStore({
-    reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        thunk: true,
-        immutableCheck: true,
-        serializableCheck: {
-          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        },
-      }),
-    devTools: DEV,
-    preloadedState,
-  });
-}
+// function makeStore(preloadedState = undefined) {
+//   return configureStore({
+//     reducer: persistedReducer,
+//     middleware: (getDefaultMiddleware) =>
+//       getDefaultMiddleware({
+//         thunk: true,
+//         immutableCheck: true,
+//         serializableCheck: {
+//           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+//           ignoredPaths: ["modal"],
+//         },
+//       }),
+//     devTools: DEV,
+//     preloadedState,
+//   });
+// }
 
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActions: [
+          FLUSH,
+          REHYDRATE,
+          PAUSE,
+          PERSIST,
+          PURGE,
+          REGISTER,
+          openModal.type,
+          closeModal.type,
+        ],
+        ignoredPaths: ["modal"],
+        ignoredActionPaths: ["payload.modal"],
       },
     }),
 });
