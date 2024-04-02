@@ -1,14 +1,9 @@
 import BrideForm from "@components/Bridge/BrideForm";
-import CryptoSelect from "@components/Bridge/CryptoSelect";
 import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import TransactionContainer from "@components/Transaction/TransactionContainer";
-import BrideTo from "@components/Bridge/BridgeTo";
-import ButtonStyled from "@components/ButtonStyled";
-import { useModal } from "@states/modal/hooks";
 import { useAppDispatch } from "@states/hooks";
-import { ModalSlide } from "@states/modal/reducer";
 import { Connector, useAccount, useConfig, useConnect } from "wagmi";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { NETWORKCONFIG } from "@providers/config";
@@ -17,7 +12,6 @@ import { useL1PublicClient } from "@hooks/useL1PublicClient";
 import { useL2PublicClient } from "@hooks/useL2PublicClient";
 import { NetworkType, Token } from "@utils/opType";
 import { useOPTokens } from "@hooks/useOPTokens";
-import { networkPairsByGroup } from "@utils/networkPairs";
 import BridgeReviewButton from "@components/Bridge/BridgeReviewButton";
 
 interface Props extends SimpleComponent {}
