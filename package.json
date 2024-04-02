@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ensdomains/ensjs": "^3.4.3",
+    "@eth-optimism/contracts": "^0.6.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@rainbow-me/rainbowkit": "^1.3.2",
     "@reduxjs/toolkit": "^2.0.1",

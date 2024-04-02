@@ -1,10 +1,11 @@
 import ButtonStyled from "@components/ButtonStyled";
 import { useIsNetworkUnsupported } from "@hooks/useIsNetworkUnsupported";
 import { useSwitchNetworkDirection } from "@hooks/useSwitchNetworkPair";
-import { NetworkPair, Token } from "@utils/opType";
+import { NetworkPair, NetworkType, Token } from "@utils/opType";
 import styled from "styled-components";
-import { parseEther } from "viem";
+import { Chain, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import BridgeReviewDeposit from "./BridgeReviewDeposit";
 
 export type BridgeSubmitButtonProps = {
   // action: 'deposit' | 'withdrawal'
@@ -13,9 +14,8 @@ export type BridgeSubmitButtonProps = {
   selectedTokenPair: [Token, Token];
   validationError?: string;
   onSubmit?: () => void;
+  networkType?: NetworkType;
 };
-
-const BridgeDepositReviewButtonWrapper = styled.div``;
 
 function BridgeDepositReviewButton({
   // action,
@@ -68,25 +68,14 @@ function BridgeDepositReviewButton({
   // }
 
   return (
-    <BridgeDepositReviewButtonWrapper>
-      <div className="mt-4 w-full">
-        <ButtonStyled className="w-full" disabled={false}>
-          Review deposit
-        </ButtonStyled>
-      </div>
-
-      <div className="mt-6">
-        <div className="flex w-full justify-between">
-          <span>Gas fee to transfer</span>
-          <b>0.001082991121245616 ETH ($3.95)</b>
-        </div>
-
-        <div className="mt-2 flex w-full justify-between">
-          <span>Time to transfer</span>
-          <b>~1 minute</b>
-        </div>
-      </div>
-    </BridgeDepositReviewButtonWrapper>
+    <BridgeReviewDeposit
+      l1={networkPair.l1 as Chain}
+      l2={networkPair.l2 as Chain}
+      amount={amount ?? "0"}
+      disabled={shouldDisableReview}
+      selectedTokenPair={selectedTokenPair}
+      onSubmit={onSubmit}
+    />
   );
 }
 

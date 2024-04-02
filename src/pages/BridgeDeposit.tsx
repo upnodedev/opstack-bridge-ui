@@ -9,7 +9,6 @@ import ButtonStyled from "@components/ButtonStyled";
 import { useModal } from "@states/modal/hooks";
 import { useAppDispatch } from "@states/hooks";
 import { ModalSlide } from "@states/modal/reducer";
-import BrideDepositReviewModal from "@components/Bridge/BrideDepositReviewModal";
 import { Connector, useAccount, useConfig, useConnect } from "wagmi";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { NETWORKCONFIG } from "@providers/config";
@@ -19,7 +18,7 @@ import { useL2PublicClient } from "@hooks/useL2PublicClient";
 import { NetworkType, Token } from "@utils/opType";
 import { useOPTokens } from "@hooks/useOPTokens";
 import { networkPairsByGroup } from "@utils/networkPairs";
-import BridgeDepositReviewButton from "@components/Bridge/BridgeDepositReviewButton";
+import BridgeReviewButton from "@components/Bridge/BridgeReviewButton";
 
 interface Props extends SimpleComponent {}
 
@@ -33,11 +32,10 @@ function BridgeDeposit(props: Props) {
     undefined,
   );
 
-  const reviewDeposit = () => {
-    dispatch(
-      ModalSlide.actions.openModal({ component: <BrideDepositReviewModal /> }),
-    );
-  };
+  const onSubmit = useCallback(() => {
+    setAmount(undefined)
+    setValidationError(undefined)
+  }, [setAmount, setValidationError])
 
   // new bie
   const config = useConfig();
@@ -151,12 +149,13 @@ function BridgeDeposit(props: Props) {
               />
             </div>
             {/* <BrideTo {...propsList} /> */}
-            <BridgeDepositReviewButton
+            <BridgeReviewButton
               amount={amount}
               networkPair={networkPair}
               selectedTokenPair={selectedTokenPair}
               validationError={validationError}
-              onSubmit={reviewDeposit}
+              onSubmit={onSubmit}
+              networkType={networkType}
             />
           </div>
         </div>
