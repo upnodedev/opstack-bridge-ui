@@ -79,7 +79,7 @@ export const mode = defineChain({
 // clone of mainnet and edit the chainId
 export const quicknodeETHSepolia: Chain = {
   ...sepolia,
-  name: 'quicknodeETHSepolia',
+  // name: 'quicknodeETHSepolia',
   rpcUrls: {
     default: {
       http: [
@@ -90,7 +90,7 @@ export const quicknodeETHSepolia: Chain = {
 }
 export const quicknodeoptimismSepolia: Chain = {
   ...optimismSepolia,
-  name: 'quicknodeoptimismSepolia',
+  // name: 'quicknodeoptimismSepolia',
   rpcUrls: {
     default: {
       http: [

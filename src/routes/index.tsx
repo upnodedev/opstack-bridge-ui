@@ -1,15 +1,18 @@
-import Bridge from "@pages/Bridge";
+import BridgeDeposit from "@pages/BridgeDeposit";
 import SelectChain from "@pages/SelectChain";
 import { createRef } from "react";
 
 const routes = [
-  { path: "/", element: <Bridge name="HomePage" />, nodeRef: createRef() },
   {
-    path: "/select-chain",
+    path: "/",
     element: <SelectChain name="HomePage" />,
     nodeRef: createRef(),
   },
-  { path: "/toast", element: <Bridge />, nodeRef: createRef() },
+  {
+    path: "/bridge/deposit",
+    element: <BridgeDeposit name="bridge deposit" />,
+    nodeRef: createRef(),
+  },
 ];
 
 export default routes;

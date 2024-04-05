@@ -15,9 +15,9 @@ function NetworkSelectBox({ logo, chain }: Props) {
           L1 ETH
         </div>
       </div>
-      <div className="mb-4 flex flex-col items-center justify-center gap-4">
-        <img src={logo} className="h-24 w-24 rounded-full" alt="" />
-        <div className="text-2xl">{chain}</div>
+      <div className="flex flex-col items-center justify-center gap-4">
+        <img src={logo} className="h-12 w-12 rounded-full" alt="" />
+        <div className="text-xl">{chain}</div>
       </div>
     </NetworkSelectBoxWrapper>
   );

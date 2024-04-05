@@ -35,10 +35,10 @@ export default function Navbar() {
                 <span>Home</span>
               </Link>
               <Link
-                to="/domain"
+                to="/bridge/deposit"
                 style={{ textDecoration: "none", color: "black" }}
               >
-                <span>Bridge</span>
+                <span>Deposit</span>
               </Link>
             </div>
           </div>

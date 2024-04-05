@@ -12,6 +12,7 @@ export function configureOpChains({
   defaultL2ChainId,
   type,
 }: ConfigureOPChainArgs): [Chain, ...Chain[]] {
+  console.log('networkPairsByGroup', networkPairsByGroup[type])
   if (!networkPairsByGroup[type]) {
     throw new Error(`Invalid Network Type ${type}`)
   }

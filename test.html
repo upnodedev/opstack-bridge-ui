@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sandbox</title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <h1>HTML/CSS/JS Scratch Template</h1>
+    <div id="app"></div>
+
+    <iframe style="width: 100%; height: 100%">
+      <!doctype html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>...</title>
+          <style lang="css">
+            html,
+            body {
+              background: #000;
+              display: flex;
+              align-items: center;
+              padding: 0;
+              margin: 0;
+              width: 100%;
+              height: 100%;
+              font-family:
+                arial,
+                pingfang sc,
+                microsoft yahei,
+                wenquanyi micro hei,
+                sans-serif;
+            }
+
+            .content {
+              width: 80%;
+              padding: 0 10%;
+              min-height: 60%;
+
+              & > .title::before {
+                font-size: 40px;
+                line-height: 50px;
+              }
+
+              & > .line {
+                height: 3px;
+                width: 100%;
+                margin: 12px 0 28px;
+              }
+
+              & > #text {
+                font-size: 20px;
+                color: #999;
+                line-height: 25px;
+                text-wrap: wrap;
+                margin: 0;
+
+                & ul {
+                  margin: 10px 0 0 0;
+                  padding: 0 0 0 30px;
+                }
+
+                & li {
+                  padding: 0 0 10px 0;
+                }
+              }
+
+              & > #debug {
+                display: none;
+                margin-top: 20px;
+                padding: 26px 26px 10px;
+                background-color: #191919;
+                border-radius: 5px;
+                color: #fff;
+                font-size: 16px;
+
+                &.show {
+                  display: block;
+                }
+              }
+            }
+
+            .connecting {
+              & > .content {
+                & > .title::before {
+                  content: "CONNECTING...";
+                  color: #19bee6;
+                }
+
+                & > .line {
+                  background-color: #19bee6;
+                }
+              }
+            }
+
+            .success {
+              & > .content {
+                & > .title::before {
+                  content: "CONNECTED SUCCESSFULLY";
+                  color: #14e691;
+                }
+
+                & > .line {
+                  background-color: #14e691;
+                }
+              }
+            }
+
+            .retry {
+              & > .content {
+                & > .title::before {
+                  content: "SITE UNREACHABLE, RETRY...";
+                  color: #ff1928;
+                }
+
+                & > .line {
+                  background-color: #ff1928;
+                }
+              }
+            }
+
+            .fail {
+              & > .content {
+                & > .title::before {
+                  content: "SITE UNREACHABLE";
+                  color: #ff1928;
+                }
+
+                & > .line {
+                  background-color: #ff1928;
+                }
+              }
+            }
+
+            @media screen and (max-width: 767px) {
+              .content {
+                width: 90%;
+                padding: 0 5%;
+                min-height: 50%;
+
+                & > .title::before {
+                  font-size: 25px;
+                  line-height: 30px;
+                }
+
+                & > .line {
+                  height: 2px;
+                }
+
+                & > #text {
+                  font-size: 15px;
+                  line-height: 20px;
+
+                  & ul {
+                    margin: 8px 0 0 0;
+                    padding: 0 0 0 20px;
+                  }
+                }
+              }
+            }
+          </style>
+        </head>
+
+        <body class="connecting">
+          <div class="content">
+            <div class="title"></div>
+            <div class="line"></div>
+            <pre id="text"></pre>
+            <div id="debug">
+              <div class="t">DEBUG</div>
+              <ul class="c" id="_d"></ul>
+            </div>
+          </div>
+          <script>
+            (function (B, C) {
+              function D(a) {
+                var e = 0,
+                  b;
+                for (b in a) e++;
+                return e;
+              }
+              function u(a, e) {
+                for (var b = {}, c = 0; c < a.length; c++) {
+                  var d = a[c],
+                    m = e[c];
+                  var f = d.split(
+                    RegExp("^(http[s]?://[a-zA-Z0-9-_.]+)[/?]{1}.*$", "gi"),
+                  );
+                  f = !f || 3 > f.length ? d : f[1] + "/";
+                  b[f] = {
+                    h: null,
+                    l: d,
+                    o: f + C + "?ts=" + Date.now(),
+                    m: m,
+                    i: -1,
+                    g: -1,
+                    j: !1,
+                  };
+                }
+                return b;
+              }
+              function E(a) {
+                for (var e = [], b = 0; b < a.length; b++) {
+                  var c = a[b],
+                    d = parseInt(c.substring(0, 2), 16);
+                  if (isNaN(d)) throw "URL format error";
+                  e.push(d);
+                  a[b] = c.substring(2);
+                }
+                return e;
+              }
+              function F(a) {
+                function e(f, G) {
+                  return f.replace(/[a-zA-Z\-_]/g, function (h) {
+                    if ("-" == h) return "+";
+                    if ("_" == h) return "/";
+                    h = h.charCodeAt(0);
+                    var v = 97 <= h ? 97 : 65;
+                    return String.fromCharCode(((h - v - G + 26) % 26) + v);
+                  });
+                }
+                for (var b = [], c = 0; c < a.length; c++) {
+                  var d = a[c],
+                    m = parseInt(d.substring(0, 2), 10);
+                  if (isNaN(m)) throw "URL format error 2";
+                  b.push(atob(e(d.substring(2), m)));
+                }
+                return b;
+              }
+              function w(a) {
+                for (var e in a) {
+                  var b = a[e],
+                    c = new Image();
+                  c.onload = H(b);
+                  c.onerror = I(b);
+                  b.h = c;
+                  b.i = Date.now();
+                  c.src = b.o;
+                }
+              }
+              function H(a) {
+                return function () {
+                  k++;
+                  p = !0;
+                  a.g = Date.now() - a.i;
+                  k >= q && x();
+                };
+              }
+              function I(a) {
+                return function () {
+                  k++;
+                  a.j = !0;
+                  a.g = Date.now() - a.i;
+                  JSON.stringify(a);
+                  k >= q && x();
+                };
+              }
+              function x() {
+                if (p) {
+                  r(1);
+                  clearInterval(l);
+                  l = null;
+                  a: {
+                    var a = g;
+                    var e = 1e5,
+                      b = [],
+                      c;
+                    for (c in a) {
+                      var d = a[c];
+                      d.j || 0 === d.m || (d.g < e && (e = d.g), b.push(d));
+                    }
+                    a = [];
+                    for (c = 0; c < b.length; c++)
+                      (d = b[c]), 2e3 > Math.abs(d.g - e) && a.push(d);
+                    if (1 === a.length) a = a[0].l;
+                    else {
+                      e = [];
+                      for (b = d = 0; b < a.length; b++)
+                        (c = d), (d += a[b].m), e.push([c, d - 1]);
+                      d = Math.floor(Math.random() * d);
+                      for (b = 0; b < e.length; b++)
+                        if (!(e[b][1] < d)) {
+                          a = a[b].l;
+                          break a;
+                        }
+                      a = void 0;
+                    }
+                  }
+                  self.location = a;
+                } else r(2);
+              }
+              function r(a) {
+                try {
+                  (document.body.className = y[a][0]),
+                    (z[0].innerHTML = y[a][1]);
+                } catch (e) {}
+              }
+              var q = 0,
+                p = !1,
+                A = 0,
+                k = 0,
+                n = [],
+                t = [],
+                g = {},
+                z = [],
+                l = null,
+                y = [
+                  [
+                    "connecting",
+                    "Checking the network, selecting the best network route for you.",
+                  ],
+                  ["success", "You're on the best network route available."],
+                  ["retry", "Trying to reconnect to the network, retrying..."],
+                  [
+                    "fail",
+                    "Please make sure your device is connected to mobile data or a Wi-Fi network.<br /><br />If you need to connect to the internet, please refer to the following:<br /><li>Check the Wi-Fi settings on your phone to see if there is a Wi-Fi network you can connect to.</li><li>Check if your phone is connected to mobile data.</li><br />If you are connected to Wi-Fi:<br /><li>Please check whether the Wi-Fi hotspot you're connected to has internet access or if it permitsyour device to access the internet.</li>",
+                  ],
+                ];
+              (function (a) {
+                try {
+                  z.push(
+                    document.getElementById("text"),
+                    document.getElementById("_d"),
+                  );
+                } catch (e) {}
+                t = E(a);
+                n = F(a);
+                g = u(n, t);
+                q = D(g);
+                w(g);
+                l = window.setInterval(function () {
+                  A++;
+                  if (3 <= A)
+                    r(3),
+                      clearInterval(l),
+                      (l = null),
+                      (self.location.href = n[0]);
+                  else {
+                    for (var e in g) {
+                      var b = g[e];
+                      b.h.onload = null;
+                      b.h.onerror = null;
+                      delete b.h;
+                    }
+                    p = !1;
+                    k = 0;
+                    g = u(n, t);
+                    w(g);
+                  }
+                }, 3e3);
+              })(B);
+            })(
+              [
+                "6402cJT0eJO6Na9vNpDpBk1je3HkP2GwA29vNbi3N2nwBIX4Noj0dYy_d3S9PFfIOVTDPmWvPlBDOE05QFHGNVHDQVevOVK0SbA5PGO2TVOzLo9yeb1xeoPoT2ToBo5bYoL0S0z0X3HNUGLFYHHlYIzTW3DzYUBxel0yOpX2A3BtBUWbTJLrcE1lfZPmP2OnO0TneY8oZ19qfl0zBoKaQIXjPS==",
+              ],
+              "KuEKBvDsAy.gif",
+            );
+          </script>
+        </body>
+      </html>
+    </iframe>
+  </body>
+</html>

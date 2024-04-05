@@ -167,9 +167,7 @@ function SelectChain(props: Props) {
         </div>
       </div>
       <div className="col-span-2 px-6">
-        <h2>Activity</h2>
         <TransactionContainer status="Pending" />
-        <TransactionContainer status="Completed" />
       </div>
     </SelectChainWrapper>
   );

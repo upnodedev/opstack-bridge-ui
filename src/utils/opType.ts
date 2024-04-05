@@ -53,9 +53,10 @@ export type Token = {
   decimals: number
   logoURI: string
   extensions: {
-    optimismBridgeAddress: Address
+    optimismBridgeAddress?: Address
     opListId: string
     opTokenId: string
+    baseBridgeAddress?: Address
   }
 }
 
