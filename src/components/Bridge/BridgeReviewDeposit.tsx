@@ -157,6 +157,11 @@ function BridgeReviewDeposit({
     ? usdtPriceFetch * +formatUnits(txData.amount, l1Token.decimals)
     : 0;
 
+  const usdtBalancePrice = usdtPriceFetch
+    ? usdtPriceFetch * Number(balance.data.formatted)
+    : 0;
+
+
   return (
     <BridgeReviewDepositWrapper>
       <div className="flex w-full flex-col gap-2 rounded-md border-2 border-primary bg-gray-light p-4">
@@ -183,9 +188,12 @@ function BridgeReviewDeposit({
             {!address || balance.isPending ? (
               <Icon icon={"line-md:loading-loop"} />
             ) : (
-              balance.data.formatted
-            )}
-            {l2Token.symbol} ($3.95)
+              (+balance.data.formatted).toFixed(4)
+            )}{" "}
+            {l2Token.symbol}{" "}
+            {+usdtBalancePrice
+              ? `(${formatNumberStringComma(+usdtBalancePrice.toFixed(2))} $)`
+              : ""}
           </b>
         </div>
       </div>
