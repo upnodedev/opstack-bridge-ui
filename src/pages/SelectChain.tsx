@@ -1,3 +1,4 @@
+import { WithdrawModal } from "@components/Modal/WithdrawModal";
 import NetworkSelectBox from "@components/NetworkSelect/NetworkSelectBox";
 import SearchBox from "@components/SearchBox";
 import TransactionContainer from "@components/Transaction/TransactionContainer";
@@ -12,6 +13,7 @@ function SelectChain(props: Props) {
   const [selectedTab, setSelectedTab] = useState("Mainnet");
   return (
     <SelectChainWrapper className="grid w-full grid-cols-5 py-8">
+      <WithdrawModal />
       <div className="col-span-3 flex flex-col gap-6">
         <div>
           <b className="text-2xl">Select destination chain</b>
@@ -21,7 +23,7 @@ function SelectChain(props: Props) {
         </div>
         <div className="flex">
           <div
-            className={`w-full rounded-l-lg border border-[#D0D5DD] px-4 py-2 text-center ${selectedTab === "Mainnet" && "bg-primary cursor-pointer"}`}
+            className={`w-full rounded-l-lg border border-[#D0D5DD] px-4 py-2 text-center ${selectedTab === "Mainnet" && "cursor-pointer bg-primary"}`}
             onClick={() => {
               setSelectedTab("Mainnet");
             }}

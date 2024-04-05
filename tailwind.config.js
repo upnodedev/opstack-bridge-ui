@@ -20,7 +20,7 @@ export default {
       ...colors,
     }),
     fontFamily: {
-      primary: ["DM Sans"],
+      primary: ["DM Sans","Inter"],
     },
     extend: {},
   },
