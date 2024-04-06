@@ -34,6 +34,7 @@ export type ReviewDepositDialogProps = {
   selectedTokenPair: [Token, Token];
   disabled?: boolean;
   onSubmit?: () => void;
+  networkType: NetworkType;
 };
 
 export type ReviewDepositDialogContent = {
@@ -60,6 +61,7 @@ function BridgeReviewDeposit({
   disabled,
   selectedTokenPair,
   onSubmit,
+  networkType,
 }: ReviewDepositDialogProps) {
   const dispatch = useAppDispatch();
   const { address, chain } = useAccount();
@@ -139,6 +141,7 @@ function BridgeReviewDeposit({
             selectedTokenPair={selectedTokenPair}
             gasPrice={gasPrice}
             onSubmit={onSubmit}
+            networkType={networkType}
           />
         ),
       }),
@@ -160,7 +163,6 @@ function BridgeReviewDeposit({
   const usdtBalancePrice = usdtPriceFetch
     ? usdtPriceFetch * Number(balance.data.formatted)
     : 0;
-
 
   return (
     <BridgeReviewDepositWrapper>

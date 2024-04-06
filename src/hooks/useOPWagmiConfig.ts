@@ -1,27 +1,27 @@
-import { useMemo } from 'react'
-import { useConfig } from 'wagmi'
+import { useMemo } from "react";
+import { useConfig } from "wagmi";
 
-import { deploymentAddresses } from '../configs/deploymentAddresses'
-import { useOPNetwork } from './useOPNetwork'
-import { NetworkType, OpConfig } from '@utils/opType'
-import { predeploys } from '@abi/constant'
+import { deploymentAddresses } from "../configs/deploymentAddresses";
+import { useOPNetwork } from "./useOPNetwork";
+import { NetworkType, OpConfig } from "@utils/opType";
+import { predeploys } from "@abi/constant";
 
 export type UseOPWagmiConfigArgs = {
-  type: NetworkType
-  chainId?: number
-}
+  type: NetworkType;
+  chainId?: number;
+};
 
 export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
-  const config = useConfig()
-  const { networkPair } = useOPNetwork({ type, chainId })
+  const config = useConfig();
+  const { networkPair } = useOPNetwork({ type, chainId });
 
   const opConfig = useMemo<OpConfig | undefined>(() => {
     if (!networkPair) {
-      return
+      return;
     }
 
-    const { l1, l2 } = networkPair
-    const deploymentAddress = deploymentAddresses[l2.id]
+    const { l1, l2 } = networkPair;
+    const deploymentAddress = deploymentAddresses[l2.id];
 
     return {
       ...config,
@@ -63,8 +63,10 @@ export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
           },
         },
       },
-    } as OpConfig
-  }, [config, networkPair])
+    } as OpConfig;
+  }, [config, networkPair]);
 
-  return { opConfig }
-}
+  return { opConfig };
+};
+
+export type UseOPWagmiConfigReturnType = ReturnType<typeof useOPWagmiConfig>;

@@ -14,7 +14,7 @@ export type BridgeSubmitButtonProps = {
   selectedTokenPair: [Token, Token];
   validationError?: string;
   onSubmit?: () => void;
-  networkType?: NetworkType;
+  networkType: NetworkType;
 };
 
 function BridgeDepositReviewButton({
@@ -24,6 +24,7 @@ function BridgeDepositReviewButton({
   selectedTokenPair,
   validationError,
   onSubmit,
+  networkType,
 }: BridgeSubmitButtonProps) {
   const { chain } = useAccount();
   const { isUnsupported } = useIsNetworkUnsupported();
@@ -75,6 +76,7 @@ function BridgeDepositReviewButton({
       disabled={shouldDisableReview}
       selectedTokenPair={selectedTokenPair}
       onSubmit={onSubmit}
+      networkType={networkType}
     />
   );
 }

@@ -2,11 +2,12 @@ import ButtonStyled from "@components/ButtonStyled";
 import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 import { useAppDispatch } from "@states/hooks";
 import { ModalSlide } from "@states/modal/reducer";
-import { Token } from "@utils/opType";
+import { NetworkType, Token } from "@utils/opType";
 import { Modal } from "antd";
 import { useCallback, useState } from "react";
 import { Address, Chain, Hash, formatUnits } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
+import { useWriteDepositETHNew } from "@hooks/Wallet/New_L1/useWriteDepositNewETH";
 
 interface Props extends SimpleComponent {
   l1: Chain;
@@ -21,6 +22,7 @@ interface Props extends SimpleComponent {
   selectedTokenPair: [Token, Token];
   gasPrice: bigint;
   onSubmit?: () => void;
+  networkType: NetworkType;
 }
 
 export default function BrideDepositReviewModal({
@@ -30,6 +32,7 @@ export default function BrideDepositReviewModal({
   selectedTokenPair,
   gasPrice,
   onSubmit,
+  networkType,
 }: Props) {
   const dispatch = useAppDispatch();
 
@@ -51,17 +54,20 @@ export default function BrideDepositReviewModal({
   };
 
   const { address, chain } = useAccount();
-  // const { opConfig } = useOPWagmiConfig({
-  //   type: NETWORK_TYPE,
-  //   chainId: chain?.id,
-  // });
+  const { opConfig } = useOPWagmiConfig({
+    type: networkType,
+    chainId: chain?.id,
+  });
 
-  // const l1PublicClient = usePublicClient({ chainId: l1.id });
+  const l1PublicClient = usePublicClient({ chainId: l1.id });
 
   // const { data: l1TxHash, writeDepositETHAsync } = useWriteDepositETH({
   //   config: opConfig,
   // });
-  // const { data: l1ERC20TxHash, writeDepositERC20Async } = writeDepositERC20Async({
+  const { data: l1TxHash, writeDepositETHAsync } = useWriteDepositETHNew({
+    config: opConfig,
+  });
+  // const { data: l1ERC20TxHash, writeDepositERC20Async } = useWriteDepositERC20({
   //   config: opConfig,
   // });
   // const { allowance, approve } = useERC20Allowance({
@@ -72,49 +78,52 @@ export default function BrideDepositReviewModal({
   // });
 
   // const txHash = txData.isETH ? l1TxHash : l1ERC20TxHash;
+  const txHash = l1TxHash;
   const [l1Token, l2Token] = selectedTokenPair;
 
-  // const onSubmitDeposit = useCallback(async () => {
-  //   if (txData.isETH) {
-  //     await writeDepositETHAsync({
-  //       args: {
-  //         to: txData.to,
-  //         amount: txData.amount,
-  //       },
-  //       l2ChainId: l2.id,
-  //     });
-  //   } else {
-  //     const shouldApprove =
-  //       !txData.isETH && (allowance.data ?? 0n) < txData.amount;
-  //     if (shouldApprove) {
-  //       const approvalTxHash = await approve();
-  //       await l1PublicClient.waitForTransactionReceipt({
-  //         hash: approvalTxHash,
-  //       });
-  //     }
+  const onSubmitDeposit = useCallback(async () => {
+    if (!l1PublicClient) return;
+    if (txData.isETH) {
+      await writeDepositETHAsync({
+        args: {
+          to: txData.to,
+          amount: txData.amount,
+        },
+        l2ChainId: l2.id,
+      });
+    }
+    //  else {
+    //   const shouldApprove =
+    //     !txData.isETH && (allowance.data ?? 0n) < txData.amount;
+    //   if (shouldApprove) {
+    //     const approvalTxHash = await approve();
+    //     await l1PublicClient.waitForTransactionReceipt({
+    //       hash: approvalTxHash,
+    //     });
+    //   }
 
-  //     await writeDepositERC20Async({
-  //       args: {
-  //         l1Token: l1Token.address as Address,
-  //         l2Token: l2Token.address as Address,
-  //         to: txData.to,
-  //         amount: txData.amount,
-  //       },
-  //       l2ChainId: l2.id,
-  //     });
-  //   }
-  //   onSubmit?.();
-  // }, [
-  //   approve,
-  //   writeDepositETHAsync,
-  //   writeDepositERC20Async,
-  //   onSubmit,
-  //   txData,
-  //   l2,
-  //   l1PublicClient,
-  //   l1Token,
-  //   l2Token,
-  // ]);
+    //   await writeDepositERC20Async({
+    //     args: {
+    //       l1Token: l1Token.address as Address,
+    //       l2Token: l2Token.address as Address,
+    //       to: txData.to,
+    //       amount: txData.amount,
+    //     },
+    //     l2ChainId: l2.id,
+    //   });
+    // }
+    onSubmit?.();
+  }, [
+    // approve,
+    writeDepositETHAsync,
+    // writeDepositERC20Async,
+    onSubmit,
+    txData,
+    l2,
+    l1PublicClient,
+    // l1Token,
+    // l2Token,
+  ]);
 
   return (
     <Modal
@@ -153,7 +162,11 @@ export default function BrideDepositReviewModal({
         </div>
 
         <div className="w-full">
-          <ButtonStyled className="w-full" onClick={() => {}} disabled={false}>
+          <ButtonStyled
+            className="w-full"
+            onClick={onSubmitDeposit}
+            disabled={!!txHash}
+          >
             Confirm Deposit
           </ButtonStyled>
         </div>
