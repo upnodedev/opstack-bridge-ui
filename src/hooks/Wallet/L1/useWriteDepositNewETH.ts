@@ -4,6 +4,7 @@ import { OpConfig } from "@utils/opType";
 import { validateL2Chain, validatePortalContract } from "@utils/validateChains";
 import { resolveAddress } from "ethers";
 import { Chain } from "viem";
+import { simulateContract } from "viem/actions";
 import { useConfig } from "wagmi";
 import { getPublicClient, getWalletClient } from "wagmi/actions";
 
@@ -83,23 +84,42 @@ export async function writeMutation(
         data: args.data,
       }),
     );
-  
-    const payload = {
-      to: args.to,
-      value:  args.amount ? args.amount : 0n,
-      gasLimit: BigInt(l2GasLimit),
-      data: "0x",
-      isCreation: args.isCreation ? args.isCreation : false,
-      mint: args.amount ? args.amount : 0n,
-    }
 
-    console.log({payload})
+  const payload = {
+    to: args.to,
+    value: args.amount ? args.amount : 0n,
+    gasLimit: BigInt(l2GasLimit),
+    data: "0x",
+    isCreation: args.isCreation ? args.isCreation : false,
+    mint: args.amount ? args.amount : 0n,
+  };
+
+  await simulateContract(walletClient, {
+    address: resolveAddress(portal),
+    abi: ABI,
+    functionName: FUNCTION,
+    args: [
+      payload.to,
+      payload.value,
+      payload.gasLimit,
+      payload.isCreation,
+      payload.data,
+    ],
+    value: payload.mint,
+    ...(rest as any),
+  });
 
   return walletClient.writeContract({
     address: resolveAddress(portal),
     abi: ABI,
     functionName: FUNCTION,
-    args: [payload.to, payload.value, payload.gasLimit, payload.isCreation, payload.data],
+    args: [
+      payload.to,
+      payload.value,
+      payload.gasLimit,
+      payload.isCreation,
+      payload.data,
+    ],
     value: payload.mint,
     ...(rest as any),
   });

@@ -5,9 +5,11 @@ import { ModalSlide } from "@states/modal/reducer";
 import { NetworkType, Token } from "@utils/opType";
 import { Modal } from "antd";
 import { useCallback, useState } from "react";
-import { Address, Chain, Hash, formatUnits } from "viem";
+import { Address, Chain, Hash, formatEther, formatUnits } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
-import { useWriteDepositETHNew } from "@hooks/Wallet/New_L1/useWriteDepositNewETH";
+import { useWriteDepositETHNew } from "@hooks/Wallet/L1/useWriteDepositNewETH";
+import { useUsdtPrice } from "@hooks/useUsdtPrice";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface Props extends SimpleComponent {
   l1: Chain;
@@ -125,6 +127,11 @@ export default function BrideDepositReviewModal({
     // l2Token,
   ]);
 
+  const usdtPriceFetch = useUsdtPrice(l2Token.symbol);
+  const usdtPriceGas = usdtPriceFetch
+    ? usdtPriceFetch * +formatUnits(gasPrice, l1.nativeCurrency.decimals)
+    : 0;
+
   return (
     <Modal
       open={isModalOpen}
@@ -148,6 +155,22 @@ export default function BrideDepositReviewModal({
               {formatUnits(txData.amount, l1Token.decimals)} {l1Token.symbol}
             </div>
             <div className="font-bold">$919.23</div>
+          </div>
+        </div>
+
+        <div className="">
+          <span className="text-lg text-gray-dark">Gas fee to transfer</span>
+          <div className="flex w-full justify-between text-lg">
+            <div className="font-bold">
+              ~ {formatEther(gasPrice)} {l1.nativeCurrency.symbol}
+            </div>
+            <div className="font-bold">
+              {
+                usdtPriceFetch
+                  ? `$${usdtPriceGas.toFixed(4)}`
+                  :    <Icon icon={"line-md:loading-loop"} />
+              }
+              </div>
           </div>
         </div>
 
