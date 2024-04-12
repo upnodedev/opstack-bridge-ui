@@ -10,7 +10,12 @@ const routes = [
   },
   {
     path: "/bridge/deposit",
-    element: <BridgeDeposit name="bridge deposit" />,
+    element: <BridgeDeposit action="deposit" />,
+    nodeRef: createRef(),
+  },
+  {
+    path: "/bridge/withdraw",
+    element: <BridgeDeposit action="withdrawal" />,
     nodeRef: createRef(),
   },
 ];

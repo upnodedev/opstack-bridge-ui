@@ -73,6 +73,7 @@ export type L1Addresses<chainId = number> = {
   l1StandardBridge: ContractAddress<chainId>
   l1CrossDomainMessenger: ContractAddress<chainId>
   l1Erc721Bridge: ContractAddress<chainId>
+  l1Portal2?: ContractAddress<chainId>
 }
 
 export type L2Addresses<chainId = number> = {

@@ -10,7 +10,7 @@ import { useReadBalance } from "@hooks/useReadBalance";
 interface Props extends SimpleComponent {
   l1: Chain;
   l2: Chain;
-  // action: "deposit" | "withdrawal";
+  action: "deposit" | "withdrawal";
   amount?: string;
   selectedToken: Token;
   onTokenChange: (l1Token: Token, l2Token: Token) => void;
@@ -28,12 +28,13 @@ function BrideForm({
   onTokenChange,
   onAmountChange,
   onValidationError,
+  action,
 }: Props) {
   const { address, isConnected } = useAccount();
 
   const balance = useReadBalance({
-    // chain: action === "deposit" ? l1 : l2,
-    chain: l1,
+    chain: action === "deposit" ? l1 : l2,
+    // chain: l1,
     selectedToken,
   });
 

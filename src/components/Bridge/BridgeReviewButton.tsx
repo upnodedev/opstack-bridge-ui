@@ -6,9 +6,11 @@ import styled from "styled-components";
 import { Chain, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import BridgeReviewDeposit from "./BridgeReviewDeposit";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import BridgeReviewWithdraw from "./BridgeReviewWithdraw";
 
 export type BridgeSubmitButtonProps = {
-  // action: 'deposit' | 'withdrawal'
+  action: "deposit" | "withdrawal";
   amount?: string;
   networkPair: NetworkPair;
   selectedTokenPair: [Token, Token];
@@ -18,7 +20,7 @@ export type BridgeSubmitButtonProps = {
 };
 
 function BridgeDepositReviewButton({
-  // action,
+  action,
   amount,
   networkPair,
   selectedTokenPair,
@@ -52,7 +54,7 @@ function BridgeDepositReviewButton({
     return <ButtonStyled disabled={true}>Connect Wallet</ButtonStyled>;
   }
 
-  if (networkPair.l1.id !== chain?.id) {
+  if (action === "deposit" && networkPair.l1.id !== chain?.id) {
     return (
       <ButtonStyled onClick={() => switchToL1()}>
         Switch to {networkPair.l1.name}
@@ -60,24 +62,53 @@ function BridgeDepositReviewButton({
     );
   }
 
-  // if (action === "withdrawal" && networkPair.l2.id !== chain?.id) {
-  //   return (
-  //     <Button onClick={() => switchToL2()}>
-  //       Switch to {networkPair.l2.name}
-  //     </Button>
-  //   );
-  // }
+  if (action === "withdrawal" && networkPair.l2.id !== chain?.id) {
+    return (
+      <ButtonStyled onClick={() => switchToL2()}>
+        Switch to {networkPair.l2.name}
+      </ButtonStyled>
+    );
+  }
+
+  if (action === "deposit")
+    return (
+      <div>
+        <div className="my-2 flex w-full justify-center">
+          <Icon
+            icon={"iconamoon:arrow-down-2-bold"}
+            className="mx-auto text-3xl text-gray-dark"
+          />
+        </div>
+        <BridgeReviewDeposit
+          l1={networkPair.l1 as Chain}
+          l2={networkPair.l2 as Chain}
+          amount={amount ?? "0"}
+          disabled={shouldDisableReview}
+          selectedTokenPair={selectedTokenPair}
+          onSubmit={onSubmit}
+          networkType={networkType}
+        />
+      </div>
+    );
 
   return (
-    <BridgeReviewDeposit
-      l1={networkPair.l1 as Chain}
-      l2={networkPair.l2 as Chain}
-      amount={amount ?? "0"}
-      disabled={shouldDisableReview}
-      selectedTokenPair={selectedTokenPair}
-      onSubmit={onSubmit}
-      networkType={networkType}
-    />
+    <div>
+      <div className="my-2 flex w-full justify-center">
+        <Icon
+          icon={"iconamoon:arrow-down-2-bold"}
+          className="mx-auto text-3xl text-gray-dark"
+        />
+      </div>
+      <BridgeReviewWithdraw
+        l1={networkPair.l1 as Chain}
+        l2={networkPair.l2 as Chain}
+        amount={amount ?? "0"}
+        disabled={shouldDisableReview}
+        selectedTokenPair={selectedTokenPair}
+        onSubmit={onSubmit}
+        networkType={networkType}
+      />
+    </div>
   );
 }
 

@@ -50,6 +50,10 @@ export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
               address: deploymentAddress.L1ERC721BridgeProxy,
               chainId: l1.id,
             },
+            l1Portal2: {
+              address: "0x215b3a2d1766616d1c4701f3d117348711baae93",
+              chainId: l1.id,
+            }
           },
           l2Addresses: {
             l2L1MessagePasserAddress: {
