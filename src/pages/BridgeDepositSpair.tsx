@@ -126,6 +126,8 @@ function BridgeDepositSpair(props: Props) {
               l1={l1}
               l2={l2}
               // action={action}
+              action="deposit"
+
               amount={amount}
               // selectedToken={action === "deposit" ? l1Token : l2Token}
               selectedToken={l1Token}
@@ -144,6 +146,7 @@ function BridgeDepositSpair(props: Props) {
             {/* <BrideTo {...propsList} /> */}
             <BridgeReviewButton
               amount={amount}
+              action="deposit"
               networkPair={networkPair}
               selectedTokenPair={selectedTokenPair}
               validationError={validationError}
