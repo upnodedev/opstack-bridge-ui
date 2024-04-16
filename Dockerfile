@@ -2,6 +2,8 @@
 FROM node:20-alpine as build
 WORKDIR /app
 
+RUN apk add g++ make py3-pip
+
 # Install dependencies
 COPY package.json yarn.lock ./
 RUN yarn install
