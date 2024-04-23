@@ -30,7 +30,7 @@ export default function Navbar() {
         <div className="container mx-auto flex justify-between">
           <div className="flex">
             <MainLogo />
-            <div className="grid grid-cols-3 mt-2 ml-10">
+            <div className="grid grid-cols-4 mt-2 ml-10">
               <Link to="/" style={{ textDecoration: "none", color: "black" }}>
                 <span>Home</span>
               </Link>
@@ -45,6 +45,12 @@ export default function Navbar() {
                 style={{ textDecoration: "none", color: "black" }}
               >
                 <span>Withdraw</span>
+              </Link>
+              <Link
+                to="/bridge/transactions"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <span>Transaction</span>
               </Link>
             </div>
           </div>

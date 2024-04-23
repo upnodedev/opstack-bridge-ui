@@ -90,9 +90,9 @@ function BridgeDeposit({ action }: Props) {
           </div>
         </div>
       </div>
-      <div className="col-span-2 px-6">
+      {/* <div className="col-span-2 px-6">
         <TransactionContainer status="Completed" />
-      </div>
+      </div> */}
     </BridgeWrapper>
   );
 }

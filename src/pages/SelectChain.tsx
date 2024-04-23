@@ -50,7 +50,7 @@ function SelectChain(props: Props) {
         </div>
       </div>
       <div className="col-span-2 px-6">
-        <TransactionContainer status="Pending" />
+        {/* <TransactionContainer status="Pending" /> */}
       </div>
     </SelectChainWrapper>
   );

@@ -108,7 +108,7 @@ function BridgeReviewDeposit({
 
     return {
       to: isETH
-        ? addresses.OptimismPortalProxy
+        ? address
         : addresses.L1StandardBridgeProxy,
       amount: parsedAmount,
       calldata: calldata,

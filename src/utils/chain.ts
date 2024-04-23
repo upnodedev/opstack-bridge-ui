@@ -87,6 +87,11 @@ export const quicknodeETHSepolia: Chain = {
       ],
     },
   },
+  nativeCurrency:{
+    decimals: 18,
+    name: 'Ethereum',
+    symbol: 'ETH',
+  }
 }
 export const quicknodeoptimismSepolia: Chain = {
   ...optimismSepolia,
@@ -98,4 +103,9 @@ export const quicknodeoptimismSepolia: Chain = {
       ],
     },
   },
+  nativeCurrency:{
+    decimals: 18,
+    name: 'Optimism',
+    symbol: 'OP',
+  }
 }

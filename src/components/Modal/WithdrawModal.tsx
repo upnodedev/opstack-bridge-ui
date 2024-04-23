@@ -1,4 +1,3 @@
-import { ChainChip } from "@components/Chain/ChainChip";
 import { TimelineStep } from "@components/Timeline";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -12,9 +11,9 @@ export const WithdrawModal = () => {
       <div className="my-4 rounded-2xl border p-3">
         <div className="mb-1">
           <div className="flex gap-2">
-            <ChainChip chainKey="OP" />
+            {/* <ChainChip chainKey="OP" /> */}
             <Icon icon="lucide:chevron-right" />
-            <ChainChip chainKey="ETH" />
+            {/* <ChainChip chainKey="ETH" /> */}
           </div>
           <div className="mt-1 flex items-center gap-2">
             <div className="text-lg font-semibold">0.1234 ETH</div>

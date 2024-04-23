@@ -15,7 +15,7 @@ interface Props extends SimpleComponent {
   l1: Chain;
   l2: Chain;
   txData: {
-    to: Address;
+    to: Address | undefined;
     amount: bigint;
     calldata: Hash;
     isETH: boolean;

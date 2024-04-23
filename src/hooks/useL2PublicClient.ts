@@ -1,22 +1,42 @@
-import { type UsePublicClientReturnType, usePublicClient } from "wagmi";
+import {
+  type UsePublicClientReturnType as UsePublicClientReturnTypeImport,
+  usePublicClient,
+} from "wagmi";
 
 import { useOPNetwork } from "./useOPNetwork";
 import { NetworkType } from "@utils/opType";
+import { publicActionsL2, PublicActionsL2 } from "viem/op-stack";
+import { Chain, ChainContract } from "viem";
 
 export type UseL2PublicClientArgs = {
   chainId?: number;
   type: NetworkType;
 };
 
-export type UseL2PublicClientReturnType = (args: UseL2PublicClientArgs) => {
-  l2PublicClient: Exclude<UsePublicClientReturnType, undefined>;
+export type UsePublicClientReturnType = UsePublicClientReturnTypeImport & {
+  chain: {
+    contracts: {
+      portal: { [x: number]: ChainContract };
+      disputeGameFactory: { [x: number]: ChainContract };
+      l2OutputOracle: { [x: number]: ChainContract };
+    };
+  };
 };
 
-export const useL2PublicClient: UseL2PublicClientReturnType = ({
+export type UsePublicClientReturnTypeL2 = UsePublicClientReturnType &
+  PublicActionsL2;
+
+export type UseL2PublicClientReturnType = {
+  l2PublicClient: Exclude<UsePublicClientReturnTypeL2, undefined>;
+};
+
+export const useL2PublicClient = ({
   chainId,
   type,
-}: UseL2PublicClientArgs) => {
+}: UseL2PublicClientArgs): UseL2PublicClientReturnType => {
   const { networkPair } = useOPNetwork({ type, chainId });
-  const l2PublicClient = usePublicClient({ chainId: networkPair?.l2.id })!;
+  const l2PublicClient = usePublicClient({
+    chainId: networkPair?.l2.id,
+  })!.extend(publicActionsL2()) as any;
   return { l2PublicClient };
 };
