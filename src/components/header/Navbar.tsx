@@ -31,9 +31,9 @@ export default function Navbar() {
           <div className="flex">
             <MainLogo />
             <div className="grid grid-cols-4 mt-2 ml-10">
-              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+              {/* <Link to="/" style={{ textDecoration: "none", color: "black" }}>
                 <span>Home</span>
-              </Link>
+              </Link> */}
               <Link
                 to="/bridge/deposit"
                 style={{ textDecoration: "none", color: "black" }}

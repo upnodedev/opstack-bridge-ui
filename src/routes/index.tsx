@@ -4,9 +4,14 @@ import TransactionPage from "@pages/TransactionPage";
 import { createRef } from "react";
 
 const routes = [
+  // {
+  //   path: "/",
+  //   element: <SelectChain name="HomePage" />,
+  //   nodeRef: createRef(),
+  // },
   {
     path: "/",
-    element: <SelectChain name="HomePage" />,
+    element: <BridgeDeposit action="deposit" />,
     nodeRef: createRef(),
   },
   {
