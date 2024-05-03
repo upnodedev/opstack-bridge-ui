@@ -5,7 +5,6 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useUsdtPrice } from "@hooks/useUsdtPrice";
-import { formatUnits } from "viem";
 import useTransactionWithdrawETH from "@hooks/Wallet/L2/useTransactionWithdrawETH";
 import { TransactionItemWithdrawal } from "./TransactionItemWithdrawal";
 
@@ -26,14 +25,14 @@ function TransactionContainer({ action }: Props) {
   });
   const { l1, l2 } = networkPair;
 
-  const { depositLogs, loading: depositLoading } = useTransactionDepositETH();
-  // const { depositLogs, loading: depositLoading } = {
-  //   loading: false,
-  //   depositLogs: [] as any[]
-  // };
+  // const { depositLogs, loading: depositLoading } = useTransactionDepositETH();
+  const { depositLogs, loading: depositLoading } = {
+    loading: false,
+    depositLogs: [] as any[]
+  };
   const { withdrawLogs, loading: withdrawLoading } =
     useTransactionWithdrawETH();
-  console.log({ withdrawLogs, depositLogs });
+  // console.log({ withdrawLogs, depositLogs });
 
   const usdtPriceFetch = useUsdtPrice(l1.nativeCurrency.symbol);
 

@@ -1,13 +1,24 @@
-import { l2StandardBridgeABI } from "@abi/constant";
+import { l2StandardBridgeABI, portal2Abi } from "@abi/constant";
 import { useL1PublicClient } from "@hooks/useL1PublicClient";
 import { useL2PublicClient } from "@hooks/useL2PublicClient";
 import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 import { AddressType } from "@types";
-import { validateL2StandardBridgeContract } from "@utils/validateChains";
+import {
+  validateL2Chain,
+  validateL2StandardBridgeContract,
+} from "@utils/validateChains";
 import { useEffect, useState } from "react";
-import { ChainContract, decodeEventLog, parseAbiItem } from "viem";
+import {
+  ChainContract,
+  ContractFunctionRevertedError,
+  ReadContractErrorType,
+  TransactionReceipt,
+  decodeEventLog,
+  parseAbiItem,
+} from "viem";
+import { GetGameErrorType, getWithdrawals } from "viem/op-stack";
 import { useAccount } from "wagmi";
 
 export type TransactionWithdrawalTopicType = {
@@ -34,8 +45,10 @@ export type TransactionWithdrawalType = {
     | "ready-to-prove"
     | "waiting-to-finalize"
     | "ready-to-finalize"
-    | "finalized";
+    | "finalized"
+    | "unknown";
   status?: "success" | "reverted" | "pending";
+  receipt: TransactionReceipt;
 };
 
 export default function useTransactionWithdrawETH() {
@@ -172,21 +185,109 @@ export default function useTransactionWithdrawETH() {
         hash: log.transactionHash,
       });
 
-      // console.log({ chain: l2PublicClient.chain });
+      const getStatus = async () => {
+        if (!opConfig) return;
+        const portalAddress =
+          l2PublicClient.chain.contracts.portal[l1PublicClient.chain.id]
+            .address;
 
-      const withdrawStatus = await l1PublicClient.getWithdrawalStatus({
-        receipt,
-        targetChain: l2PublicClient.chain,
-        chain: undefined,
-      });
+        const [withdrawal] = getWithdrawals(receipt);
+
+        const disputeGameResult = await l1PublicClient
+          .getGame({
+            l2BlockNumber: receipt.blockNumber,
+            targetChain: l2PublicClient.chain,
+            chain: undefined,
+          })
+          .catch((err) => {
+            const error = err.reason as GetGameErrorType;
+            if (error.name === "GameNotFoundError") return "waiting-to-prove";
+            return "rejected";
+          });
+
+        const checkWithdrawalResult = await l1PublicClient
+          .readContract({
+            abi: portal2Abi,
+            address: portalAddress,
+            functionName: "checkWithdrawal",
+            args: [receipt.transactionHash, address as `0x${string}`],
+          })
+          .catch((err) => {
+            const error = err as ReadContractErrorType;
+            if (error.cause instanceof ContractFunctionRevertedError) {
+              const errorMessage = error.cause.data?.args?.[0];
+              if (
+                errorMessage ===
+                  "OptimismPortal: withdrawal has not been proven yet" ||
+                errorMessage ===
+                  "OptimismPortal: withdrawal has not been proven by proof submitter address yet"
+              ) {
+                return "ready-to-prove";
+              }
+              if (
+                errorMessage ===
+                  "OptimismPortal: proven withdrawal has not matured yet" ||
+                errorMessage ===
+                  "OptimismPortal: output proposal has not been finalized yet" ||
+                errorMessage === "OptimismPortal: output proposal in air-gap"
+              ) {
+                return "waiting-to-finalize";
+              }
+
+              return "rejected";
+            }
+          });
+
+        const finalizedResult = await l1PublicClient
+          .readContract({
+            abi: portal2Abi,
+            address: portalAddress,
+            functionName: "finalizedWithdrawals",
+            args: [withdrawal.withdrawalHash],
+          })
+          .catch(() => {
+            return "rejected";
+          });
+
+        // finalizedResult
+        if (finalizedResult || finalizedResult === "fulfilled") {
+          return "finalized";
+        }
+
+        // disputeGameResult
+        if (disputeGameResult === "waiting-to-prove") {
+          return "waiting-to-prove";
+        }
+        if (disputeGameResult === "rejected") {
+          return "unknown";
+        }
+
+        // checkWithdrawalResult
+        if (
+          checkWithdrawalResult === "ready-to-prove" ||
+          checkWithdrawalResult === "waiting-to-finalize"
+        ) {
+          return checkWithdrawalResult;
+        }
+        if (checkWithdrawalResult === "rejected") {
+          return "unknown";
+        }
+
+        if (finalizedResult === "rejected") {
+          return "unknown";
+        }
+
+        return "ready-to-finalize";
+      };
 
       logs[i] = {
         ...log,
         value: tx.value,
         time: new Date(+timestamp.toString()),
         timestamp,
-        withdrawStatus,
         status: !tx.transactionIndex ? "pending" : receipt.status,
+        withdrawStatus: await getStatus(),
+        receipt,
       };
     }
 
@@ -210,3 +311,5 @@ export default function useTransactionWithdrawETH() {
     loading,
   };
 }
+
+export function getWithdrawStatus() {}

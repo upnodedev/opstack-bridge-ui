@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 interface StatusChainProps {
-  status:
+  status?:
     | "waiting-to-prove"
     | "ready-to-prove"
     | "waiting-to-finalize"
@@ -8,7 +8,7 @@ interface StatusChainProps {
     | "finalized"
     | "success"
     | "reverted"
-    | undefined
+    | undefined | 'unknown'
     | "" | "pending";
   date?: Date;
 }

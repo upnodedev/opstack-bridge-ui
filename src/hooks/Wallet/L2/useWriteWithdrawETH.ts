@@ -10,7 +10,7 @@ import { resolveAddress } from "ethers";
 import { Chain } from "viem";
 import { simulateContract } from "viem/actions";
 import { useConfig } from "wagmi";
-import { getPublicClient, getWalletClient } from "wagmi/actions";
+import { getWalletClient } from "wagmi/actions";
 
 export type useWriteWithdrawtETHNewParameter = {
   config: OpConfig | undefined;
