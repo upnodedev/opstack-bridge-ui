@@ -61,5 +61,26 @@ export const l2ChainConfig: Chain = {
       address: ENV.L2_MULTI_CALL3_ADDRESS,
       blockCreated: ENV.L2_MULTI_CALL3_BLOCK_CREATED,
     },
+    disputeGameFactory: {
+      [l1ChainConfig.id]: {
+        address: ENV.DISPUTE_GAME_FACTORY_PROXY,
+      },
+    },
+    l2OutputOracle: {
+      [l1ChainConfig.id]: {
+        address: ENV.L2OUTPUT_ORACLE_PROXY_ADDRESS,
+      },
+    },
+    portal: {
+      [l1ChainConfig.id]: {
+        address: ENV.PORTAL_PROXY_ADDRESS,
+      },
+    },
+    l1StandardBridge: {
+      [l1ChainConfig.id]: {
+        address: ENV.L1STANDARD_BRIDGE_PROXY_ADDRESS,
+      },
+    },
   },
+  sourceId: l1ChainConfig.id,
 };

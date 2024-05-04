@@ -51,6 +51,10 @@ export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
               address: ENV.L1ERC721_BRIDGE_ADDRESS,
               chainId: l1.id,
             },
+            disputeGameFactory: {
+              address: ENV.DISPUTE_GAME_FACTORY_PROXY,
+              chainId: l1.id,
+            },
           },
           l2Addresses: {
             l2L1MessagePasserAddress: {

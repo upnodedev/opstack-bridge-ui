@@ -30,14 +30,10 @@ export type DepositETHMutationParameters = {
 
 export function useWriteDepositETHNew({
   config,
-  args,
 }: useWriteDepositETHNewParameter) {
-  const configs = useConfig(args);
-
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
-      const { l2Chain, l1ChainId } = validateL2Chain(configs, l2ChainId);
-
+      const { l2Chain, l1ChainId } = validateL2Chain(config!, l2ChainId);
       return writeMutation(config!, {
         args,
         l1ChainId,
