@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useConfig } from "wagmi";
 
-import { deploymentAddresses } from "../configs/deploymentAddresses";
+// import { deploymentAddresses } from "../configs/deploymentAddresses";
 import { useOPNetwork } from "./useOPNetwork";
 import { NetworkType, OpConfig } from "@utils/opType";
-import { predeploys } from "@abi/constant";
+// import { predeploys } from "@abi/constant";
+import ENV from "@configs/ENV";
 
 export type UseOPWagmiConfigArgs = {
   type: NetworkType;
@@ -21,7 +22,7 @@ export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
     }
 
     const { l1, l2 } = networkPair;
-    const deploymentAddress = deploymentAddresses[l2.id];
+    // const deploymentAddress = deploymentAddresses[l2.id];
 
     return {
       ...config,
@@ -31,33 +32,33 @@ export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
           l1ChainId: l1.id,
           l1Addresses: {
             portal: {
-              address: deploymentAddress.OptimismPortalProxy,
+              address: ENV.PORTAL_PROXY_ADDRESS,
               chainId: l1.id,
             },
             l2OutputOracle: {
-              address: deploymentAddress.L2OutputOracleProxy,
+              address: ENV.L2OUTPUT_ORACLE_PROXY_ADDRESS,
               chainId: l1.id,
             },
             l1StandardBridge: {
-              address: deploymentAddress.L1StandardBridgeProxy,
+              address: ENV.L1STANDARD_BRIDGE_PROXY_ADDRESS,
               chainId: l1.id,
             },
             l1CrossDomainMessenger: {
-              address: deploymentAddress.L1CrossDomainMessengerProxy,
+              address: ENV.L1CROSS_DOMAIN_MESSENGER,
               chainId: l1.id,
             },
             l1Erc721Bridge: {
-              address: deploymentAddress.L1ERC721BridgeProxy,
+              address: ENV.L1ERC721_BRIDGE_ADDRESS,
               chainId: l1.id,
             },
           },
           l2Addresses: {
             l2L1MessagePasserAddress: {
-              address: predeploys.L2ToL1MessagePasser.address,
+              address: ENV.L2L1_MESSAGE_PASSER_ADDRESS,
               chainId: l2.id,
             },
             l2StandardBridge: {
-              address: predeploys.L2StandardBridge.address,
+              address: ENV.L2STANDARD_BRIDGE_PROXY_ADDRESS,
               chainId: l2.id,
             },
           },
