@@ -1,6 +1,8 @@
-import { tokenlist } from "@configs/tokenList";
+// import { tokenlist } from "@configs/tokenList";
 import { Token } from "@utils/opType";
 import { useMemo } from "react";
+
+import { tokenListOnlyETH as tokenlist } from "@configs/tokenListOnlyETH";
 
 export type UseOPTokenArgs = {
   chainId?: number;

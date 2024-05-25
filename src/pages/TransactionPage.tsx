@@ -11,7 +11,7 @@ type Action = "deposit" | "withdrawal";
 
 function TransactionPage(props: Props) {
   const { address } = useAccount();
-  const [action, setAction] = useState<Action>("withdrawal");
+  const [action, setAction] = useState<Action>("deposit");
 
   const onClickAction = (action: Action) => () => {
     setAction(action);

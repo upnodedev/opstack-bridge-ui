@@ -1,7 +1,7 @@
 import { l1StandardBridgeABI, optimismPortalABI } from "@abi/constant";
 import ButtonStyled from "@components/ButtonStyled";
 import { ERC20_DEPOSIT_MIN_GAS_LIMIT } from "@configs/bridge";
-import { deploymentAddresses } from "@configs/deploymentAddresses";
+// import { deploymentAddresses } from "@configs/deploymentAddresses";
 import { useAppDispatch } from "@states/hooks";
 import { ModalSlide } from "@states/modal/reducer";
 import { NetworkType, Token } from "@utils/opType";
@@ -26,6 +26,7 @@ import { useReadBalance } from "@hooks/useReadBalance";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useUsdtPrice } from "@hooks/useUsdtPrice";
 import { formatNumberStringComma } from "@utils/utils";
+import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 
 export type ReviewDepositDialogProps = {
   l1: Chain;
@@ -67,8 +68,18 @@ function BridgeReviewDeposit({
   const { address, chain } = useAccount();
   const estimateFeePerGas = useEstimateFeesPerGas({ chainId: chain?.id });
 
+  const { opConfig } = useOPWagmiConfig({
+    type: networkType,
+    chainId: l2.id,
+  });
+
+  const l2Chains = opConfig?.l2chains;
+
   const txData = useMemo(() => {
-    const addresses = deploymentAddresses[l2.id];
+    if (!l2Chains) {
+      throw new Error("Cannot find l2Chains");
+    }
+    const addresses = l2Chains[l2.id].l1Addresses;
     if (!addresses) {
       throw new Error(`Cannont find OptimismPortalProxy for chain id ${l2.id}`);
     }
@@ -98,7 +109,7 @@ function BridgeReviewDeposit({
         args: [
           l1Token.address,
           l2Token.address,
-          addresses.L1StandardBridgeProxy,
+          addresses.l1StandardBridge.address,
           parsedAmount,
           ERC20_DEPOSIT_MIN_GAS_LIMIT,
           "0x",
@@ -107,9 +118,7 @@ function BridgeReviewDeposit({
     }
 
     return {
-      to: isETH
-        ? address
-        : addresses.L1StandardBridgeProxy,
+      to: isETH ? address : addresses.l1StandardBridge.address,
       amount: parsedAmount,
       calldata: calldata,
       isETH,

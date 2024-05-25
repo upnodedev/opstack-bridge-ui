@@ -31,6 +31,11 @@ export type TransactionDepositType = {
   status?: "success" | "reverted" | "pending";
 };
 
+const logsAllFetchAmount = 500000n;
+const timeFetch = 1000n;
+const logsFetchAmount = logsAllFetchAmount / timeFetch;
+
+
 export default function useTransactionDepositETH() {
   const [logs, setLogs] = useState<TransactionDepositType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,9 +71,9 @@ export default function useTransactionDepositETH() {
 
     // check length can be 100
     let time = 100;
-    const diff = currentBlock - 1000000n;
+    const diff = currentBlock - logsAllFetchAmount;
     if (diff < 0n) {
-      time = Number(currentBlock / 10000n) + 1;
+      time = Number(currentBlock / logsFetchAmount) + 1;
     }
 
     // console.log({ time });
@@ -76,43 +81,41 @@ export default function useTransactionDepositETH() {
       Array.from({ length: time }, (_, i) => {
         // no duplicate from previous
         const fromBlock =
-          currentBlock - BigInt(i + 1) * 10000n + 1n < 0n
+          currentBlock - BigInt(i + 1) * logsFetchAmount + 1n < 0n
             ? 0n
-            : currentBlock - BigInt(i + 1) * 10000n + 1n;
-        let toBlock = currentBlock - BigInt(i) * 10000n;
+            : currentBlock - BigInt(i + 1) * logsFetchAmount + 1n;
+        let toBlock = currentBlock - BigInt(i) * logsFetchAmount;
 
         if (i === time - 1 && diff < 0n) {
           toBlock = toBlock - 1n;
         }
 
         // console.log({ fromBlock, toBlock })
-        return l1PublicClient.getLogs({
-          address: portal,
-          event: parseAbiItem(
-            "event TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)",
-          ),
-          // events: parseAbi([
-          //   "event ERC20BridgeFinalized(address indexed localToken, address indexed remoteToken, address indexed from, address to, uint256 amount, bytes extraData)",
-          //   "event ERC20BridgeInitiated(address indexed localToken, address indexed remoteToken, address indexed from, address to, uint256 amount, bytes extraData)",
-          //   "event ERC20DepositInitiated(address indexed l1Token, address indexed l2Token, address indexed from, address to, uint256 amount, bytes extraData)",
-          //   // "event ERC20WithdrawalFinalized(address indexed l1Token, address indexed l2Token, address indexed from, address to, uint256 amount, bytes extraData)",
-          //   // "event ETHBridgeFinalized(address indexed from, address indexed to, uint256 amount, bytes extraData)",
-          //   // "event ETHBridgeInitiated(address indexed from, address indexed to, uint256 amount, bytes extraData)",
-          //   // "event ETHDepositInitiated(address indexed from, address indexed to, uint256 amount, bytes extraData)",
-          //   // "event ETHWithdrawalFinalized(address indexed from, address indexed to, uint256 amount, bytes extraData)",
-          // ]),
-          fromBlock: fromBlock,
-          toBlock: toBlock,
-          args: {
-            from: address,
-          },
-        });
+        return l1PublicClient
+          .getLogs({
+            address: portal,
+            event: parseAbiItem(
+              "event TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)",
+            ),
+            fromBlock: fromBlock,
+            toBlock: toBlock,
+            args: {
+              from: address,
+            },
+          })
+          .catch((e) => {
+            console.error(e);
+            throw e;
+          })
+          .then((logs) => {
+            return logs;
+          });
       }),
     );
 
-    // console.log({result})
+    const resultFlat = result.flat();
 
-    const alllogs = result.flat().map((log) => {
+    const alllogs = resultFlat.map((log) => {
       const topics = decodeEventLog({
         abi: optimismPortalABI,
         ...log,
@@ -136,15 +139,17 @@ export default function useTransactionDepositETH() {
     const currentBlock = await l1PublicClient.getBlockNumber();
     // const currentBlock = 5000000n
 
-    const allTime = currentBlock / (10000n * 100n) + 1n;
+    const allTime = currentBlock / (logsFetchAmount * timeFetch) + 1n;
 
     const logsArrayAll: any[][] = [];
 
-    // console.log({ currentBlock, allTime });
+    console.log({ currentBlock, allTime });
 
     for (let i = 0; i < allTime; i++) {
       // console.log({ i })
-      const logsArray = await getLogs(currentBlock - BigInt(i) * 10000n * 100n);
+      const logsArray = await getLogs(
+        currentBlock - BigInt(i) * logsFetchAmount * timeFetch,
+      );
       // console.log({ logsArray })
       // sleep 0.2s
       logsArrayAll.push(logsArray);

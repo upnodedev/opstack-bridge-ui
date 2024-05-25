@@ -43,6 +43,7 @@ function BridgeDeposit({ action }: Props) {
     l1EthToken,
     l2EthToken,
   ]);
+
   const [l1Token, l2Token] = selectedTokenPair;
 
   const onTokenChange = useCallback(

@@ -90,6 +90,7 @@ export default function BrideDepositReviewModal({
         args: {
           to: txData.to,
           amount: txData.amount,
+          gasLimit: 20000,
         },
         l2ChainId: l2.id,
       });

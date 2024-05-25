@@ -25,14 +25,19 @@ function TransactionContainer({ action }: Props) {
   });
   const { l1, l2 } = networkPair;
 
-  // const { depositLogs, loading: depositLoading } = useTransactionDepositETH();
-  const { depositLogs, loading: depositLoading } = {
+  const { depositLogs, loading: depositLoading } = useTransactionDepositETH();
+  // console.log({ depositLogs })
+  // const { depositLogs, loading: depositLoading } = {
+  //   loading: false,
+  //   depositLogs: [] as any[]
+  // };
+  // const { withdrawLogs, loading: withdrawLoading } =
+  //   useTransactionWithdrawETH();
+  const { withdrawLogs, loading: withdrawLoading } ={
     loading: false,
-    depositLogs: [] as any[]
-  };
-  const { withdrawLogs, loading: withdrawLoading } =
-    useTransactionWithdrawETH();
-  // console.log({ withdrawLogs, depositLogs });
+    withdrawLogs: [] as any[]
+  }
+    
 
   const usdtPriceFetch = useUsdtPrice(l1.nativeCurrency.symbol);
 
