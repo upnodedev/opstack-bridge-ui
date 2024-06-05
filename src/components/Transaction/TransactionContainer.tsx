@@ -1,14 +1,16 @@
 import styled from "styled-components";
 import { TransactionItemDeposit } from "./TransactionItemDeposit";
-import useTransactionDepositETH from "@hooks/Wallet/L1/useTransactionDepositETH";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useUsdtPrice } from "@hooks/useUsdtPrice";
-import useTransactionWithdrawETH from "@hooks/Wallet/L2/useTransactionWithdrawETH";
 import { TransactionItemWithdrawal } from "./TransactionItemWithdrawal";
+import { useAccount } from "wagmi";
+import { axiosInstance } from "@utils/api";
+import { useEffect, useState } from "react";
+import { depositEvent, withdrawalEvent } from "@types";
 
-type Action = "deposit" | "withdrawal";
+type Action = "deposit" | "withdrawal" | "all";
 
 interface Props extends SimpleComponent {
   action?: Action;
@@ -18,6 +20,7 @@ const TransactionContainerWrapper = styled.div``;
 
 function TransactionContainer({ action }: Props) {
   const { networkType, chainId } = useNetworkConfig();
+  const { address } = useAccount();
 
   const { networkPair } = useOPNetwork({
     type: networkType,
@@ -25,25 +28,48 @@ function TransactionContainer({ action }: Props) {
   });
   const { l1, l2 } = networkPair;
 
-  const { depositLogs, loading: depositLoading } = useTransactionDepositETH();
-  // console.log({ depositLogs })
-  // const { depositLogs, loading: depositLoading } = {
-  //   loading: false,
-  //   depositLogs: [] as any[]
-  // };
-  // const { withdrawLogs, loading: withdrawLoading } =
-  //   useTransactionWithdrawETH();
-  const { withdrawLogs, loading: withdrawLoading } ={
-    loading: false,
-    withdrawLogs: [] as any[]
-  }
-    
+  const [withdrawLogs, setWithdrawLogs] = useState<withdrawalEvent[]>([]);
+  const [withdrawLoading, setWithdrawLoading] = useState(true);
+
+  const [depositLogs, setDepositLogs] = useState<depositEvent[]>([]);
+  const [depositLoading, setDepositLoading] = useState(true);
 
   const usdtPriceFetch = useUsdtPrice(l1.nativeCurrency.symbol);
 
+  const fetchDepositLogs = async () => {
+    setDepositLoading(true);
+    const result = await axiosInstance.get("/deposit", {
+      params: {
+        from: address,
+        // to: address,
+        limit: 100,
+      },
+    });
+    setDepositLogs(result.data);
+    setDepositLoading(false);
+  };
+
+  const fetchWithdrawalLogs = async () => {
+    setWithdrawLoading(true);
+    const result = await axiosInstance.get("/withdrawal", {
+      params: {
+        from: address,
+        to: address,
+        limit: 100,
+      },
+    });
+    setWithdrawLogs(result.data);
+    setWithdrawLoading(false);
+  };
+
+  useEffect(() => {
+    fetchDepositLogs();
+    fetchWithdrawalLogs();
+  }, []);
+
   if (action === "deposit")
     return (
-      <TransactionContainerWrapper className="mt-4 px-6 py-2">
+      <TransactionContainerWrapper>
         {/* <h2>Activity</h2> */}
         {/* <div className="text-base text-[#4C4E64AD]">{status}</div> */}
 
@@ -72,10 +98,7 @@ function TransactionContainer({ action }: Props) {
     );
 
   return (
-    <TransactionContainerWrapper className="mt-4 px-6 py-2">
-      {/* <h2>Activity</h2> */}
-      {/* <div className="text-base text-[#4C4E64AD]">{status}</div> */}
-
+    <TransactionContainerWrapper>
       {withdrawLoading ? (
         <div className="flex justify-center">
           <Icon

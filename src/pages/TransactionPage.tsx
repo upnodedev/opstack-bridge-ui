@@ -1,4 +1,5 @@
 import TransactionContainer from "@components/Transaction/TransactionContainer";
+import { capitalizeFirstLetter } from "@utils/utils";
 import { useState } from "react";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
@@ -7,49 +8,58 @@ interface Props extends SimpleComponent {}
 
 const TransactionPageWrapper = styled.div``;
 
-type Action = "deposit" | "withdrawal";
+type Action = "deposit" | "withdrawal" | "all";
 
 function TransactionPage(props: Props) {
-  const { address } = useAccount();
-  const [action, setAction] = useState<Action>("deposit");
+  const [action, setAction] = useState<Action>("withdrawal");
 
   const onClickAction = (action: Action) => () => {
     setAction(action);
   };
+
+  const actionList: Action[] = ["all", "deposit", "withdrawal"];
+
   return (
     <TransactionPageWrapper>
       <div className="mx-auto max-w-3xl">
-        <div className="rounded-xl border-[1.5px] border-primary bg-white py-4">
-          <div className="w-full rounded-xl p-6">
-            <i className="text-xl">Account</i>
-            <div className="text-lg">{address}</div>
+        <div className="py-4">
+          <div className="mb-4 w-full">
+            <b className="text-xl">Transactions</b>
           </div>
 
           {/* selection action */}
           <div className="mt-2 w-full">
-            <div className="grid grid-cols-2 items-center text-center text-xl">
-              <div
-                className={`cursor-pointer border-y-2 border-primary py-2 transition-all ${
-                  action === "deposit" ? "bg-primary" : "bg-transparent"
-                }`}
-                onClick={onClickAction("deposit")}
-              >
-                Deposit
-              </div>
-
-              <div
-                className={`cursor-pointer border-y-2 border-primary py-2 transition-all ${
-                  action === "withdrawal" ? "bg-primary" : "bg-transparent"
-                }`}
-                onClick={onClickAction("withdrawal")}
-              >
-                Withdrawal
-              </div>
+            <div className="grid grid-cols-3 items-center gap-4 text-center text-xl">
+              {actionList.map((item, index) => (
+                <div
+                  key={`action-${index}`}
+                  className={`cursor-pointer rounded py-2 transition-all hover:bg-primary hover:text-black ${
+                    action === item
+                      ? "bg-primary bg-opacity-80"
+                      : "bg-transparent text-gray-medium"
+                  }`}
+                  onClick={onClickAction(item)}
+                >
+                  {capitalizeFirstLetter(item)}
+                </div>
+              ))}
             </div>
           </div>
           {/* end of actions */}
-
-          <TransactionContainer action={action}/>
+          <div className="mt-4 w-full rounded-md bg-white p-4 border-gray-light border-[1px]">
+            <div className="w-full grid grid-cols-4 py-4 border-b-[1px] border-b-gray-dark">
+              <div className="col-span-2">
+                Transaction Status
+              </div>
+              <div>
+                From
+              </div>
+              <div>
+                To
+              </div>
+            </div>
+            <TransactionContainer action={action} />
+          </div>
         </div>
       </div>
     </TransactionPageWrapper>

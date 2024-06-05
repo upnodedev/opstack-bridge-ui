@@ -1,6 +1,12 @@
 import { l2StandardBridgeABI, portal2Abi } from "@abi/constant";
-import { useL1PublicClient } from "@hooks/useL1PublicClient";
-import { useL2PublicClient } from "@hooks/useL2PublicClient";
+import {
+  l1PublicClientType,
+  useL1PublicClient,
+} from "@hooks/useL1PublicClient";
+import {
+  l2PublicClientType,
+  useL2PublicClient,
+} from "@hooks/useL2PublicClient";
 import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
@@ -312,4 +318,111 @@ export default function useTransactionWithdrawETH() {
   };
 }
 
-export function getWithdrawStatus() {}
+export const getStatus = async (
+  l1PublicClient: l1PublicClientType,
+  l2PublicClient: l2PublicClientType,
+  receipt: TransactionReceipt,
+  address: AddressType,
+) => {
+  const portalAddress =
+    l2PublicClient.chain.contracts.portal[l1PublicClient.chain.id].address;
+
+  const [withdrawal] = getWithdrawals(receipt);
+
+  try {
+    const portalVersion = await l1PublicClient.readContract({
+      abi: portal2Abi,
+      address: portalAddress,
+      functionName: "version",
+    });
+    console.log({ portalVersion });
+  } catch (err) {
+    console.log("errrrr", err);
+  }
+
+  // const disputeGameResult = await l1PublicClient
+  //   .getGame({
+  //     l2BlockNumber: receipt.blockNumber,
+  //     targetChain: l2PublicClient.chain,
+  //     chain: undefined,
+  //   })
+  //   .catch((err) => {
+  //     const error = err.reason as GetGameErrorType;
+  //     if (error.name === "GameNotFoundError") return "waiting-to-prove";
+  //     return "rejected";
+  //   });
+
+  // const checkWithdrawalResult = await l1PublicClient
+  //   .readContract({
+  //     abi: portal2Abi,
+  //     address: portalAddress,
+  //     functionName: "checkWithdrawal",
+  //     args: [receipt.transactionHash, address as `0x${string}`],
+  //   })
+  //   .catch((err) => {
+  //     const error = err as ReadContractErrorType;
+  //     if (error.cause instanceof ContractFunctionRevertedError) {
+  //       const errorMessage = error.cause.data?.args?.[0];
+  //       if (
+  //         errorMessage ===
+  //           "OptimismPortal: withdrawal has not been proven yet" ||
+  //         errorMessage ===
+  //           "OptimismPortal: withdrawal has not been proven by proof submitter address yet"
+  //       ) {
+  //         return "ready-to-prove";
+  //       }
+  //       if (
+  //         errorMessage ===
+  //           "OptimismPortal: proven withdrawal has not matured yet" ||
+  //         errorMessage ===
+  //           "OptimismPortal: output proposal has not been finalized yet" ||
+  //         errorMessage === "OptimismPortal: output proposal in air-gap"
+  //       ) {
+  //         return "waiting-to-finalize";
+  //       }
+
+  //       return "rejected";
+  //     }
+  //   });
+
+  // const finalizedResult = await l1PublicClient
+  //   .readContract({
+  //     abi: portal2Abi,
+  //     address: portalAddress,
+  //     functionName: "finalizedWithdrawals",
+  //     args: [withdrawal.withdrawalHash],
+  //   })
+  //   .catch(() => {
+  //     return "rejected";
+  //   });
+
+  // // finalizedResult
+  // if (finalizedResult || finalizedResult === "fulfilled") {
+  //   return "finalized";
+  // }
+
+  // // disputeGameResult
+  // if (disputeGameResult === "waiting-to-prove") {
+  //   return "waiting-to-prove";
+  // }
+  // if (disputeGameResult === "rejected") {
+  //   return "unknown";
+  // }
+
+  // // checkWithdrawalResult
+  // if (
+  //   checkWithdrawalResult === "ready-to-prove" ||
+  //   checkWithdrawalResult === "waiting-to-finalize"
+  // ) {
+  //   return checkWithdrawalResult;
+  // }
+  // if (checkWithdrawalResult === "rejected") {
+  //   return "unknown";
+  // }
+
+  // if (finalizedResult === "rejected") {
+  //   return "unknown";
+  // }
+
+  return "ready-to-finalize";
+};

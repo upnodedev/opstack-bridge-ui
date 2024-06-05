@@ -13,6 +13,8 @@ export type UseL2PublicClientArgs = {
   type: NetworkType;
 };
 
+export type l2PublicClientType = Exclude<UsePublicClientReturnTypeL2, undefined>
+
 export type UsePublicClientReturnType = UsePublicClientReturnTypeImport & {
   chain: {
     contracts: {
@@ -27,7 +29,7 @@ export type UsePublicClientReturnTypeL2 = UsePublicClientReturnType &
   PublicActionsL2;
 
 export type UseL2PublicClientReturnType = {
-  l2PublicClient: Exclude<UsePublicClientReturnTypeL2, undefined>;
+  l2PublicClient: l2PublicClientType;
 };
 
 export const useL2PublicClient = ({

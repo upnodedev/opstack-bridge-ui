@@ -11,10 +11,12 @@ export type UseL1PublicClientArgs = {
   type: NetworkType;
 };
 
+export type l1PublicClientType = Exclude<UsePublicClientReturnTypeL1, undefined>
+
 export type UsePublicClientReturnTypeL1 = UsePublicClientReturnType & PublicActionsL1;
 
 export type UseL1PublicClientReturnType = (args: UseL1PublicClientArgs) => {
-  l1PublicClient: Exclude<UsePublicClientReturnTypeL1, undefined>;
+  l1PublicClient: l1PublicClientType;
 };
 
 export const useL1PublicClient: UseL1PublicClientReturnType = ({

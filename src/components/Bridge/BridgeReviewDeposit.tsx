@@ -92,13 +92,10 @@ function BridgeReviewDeposit({
 
     if (isETH) {
       calldata = encodeFunctionData({
-        abi: optimismPortalABI,
-        functionName: "depositTransaction",
+        abi: l1StandardBridgeABI,
+        functionName: "depositETH",
         args: [
-          address as Address,
-          parsedAmount,
-          parseUnits("1", 5),
-          false,
+          ERC20_DEPOSIT_MIN_GAS_LIMIT,
           "0x",
         ],
       });
@@ -118,7 +115,7 @@ function BridgeReviewDeposit({
     }
 
     return {
-      to: isETH ? address : addresses.l1StandardBridge.address,
+      to: addresses.l1StandardBridge.address,
       amount: parsedAmount,
       calldata: calldata,
       isETH,

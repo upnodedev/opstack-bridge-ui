@@ -19,3 +19,29 @@ export type ReturnedENS = {
 
 export const emptyAddress =
   "0x0000000000000000000000000000000000000000" as AddressType;
+
+export type depositEvent = {
+  transactionHash: string;
+  from: string;
+  to: string;
+  amount: string;
+  isEth: number;
+  extraData: string;
+  remoteToken: string;
+  localToken: string;
+  blockNumber: number;
+  addressContract: string;
+  version: string;
+};
+
+export type withdrawalEvent = {
+  l1Token: string;
+  l2Token: string;
+  from: string;
+  to: string;
+  amount: string;
+  extraData: string;
+  transactionHash: string;
+  blockNumber: number;
+  addressContract: string;
+};

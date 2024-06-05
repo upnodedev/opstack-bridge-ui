@@ -1,6 +1,7 @@
 import ENV from "@configs/ENV";
+import { createPublicClient, http } from "viem";
 import type { Chain } from "viem/chains";
-// import { sepolia, optimismSepolia,base } from "viem/chains";
+// import { sepolia, optimism,base } from "viem/chains";
 
 // clone of mainnet and edit the chainId
 export const l1ChainConfig: Chain = {
@@ -80,6 +81,9 @@ export const l2ChainConfig: Chain = {
       [l1ChainConfig.id]: {
         address: ENV.L1STANDARD_BRIDGE_PROXY_ADDRESS,
       },
+    },
+    l2StandardBridge: {
+      address: ENV.L2STANDARD_BRIDGE_PROXY_ADDRESS,
     },
   },
   sourceId: l1ChainConfig.id,

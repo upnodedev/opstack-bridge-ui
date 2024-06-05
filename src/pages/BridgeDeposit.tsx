@@ -54,8 +54,8 @@ function BridgeDeposit({ action }: Props) {
   );
 
   return (
-    <BridgeWrapper className="grid w-full grid-cols-5 gap-4 py-8">
-      <div className="col-span-3">
+    <BridgeWrapper className="flex justify-center w-full py-8">
+      <div className="w-[40rem]">
         <div className="text-md flex gap-2">
           <Icon icon={"akar-icons:arrow-left"} />
           Start Over

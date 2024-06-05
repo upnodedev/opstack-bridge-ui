@@ -135,3 +135,14 @@ export const hexToNumber = (hex: string) => parseInt(hex, 16);
 export const formatNumberStringComma = (num: number) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+export function capitalizeFirstLetter(str: string) {
+  if (str.length === 0) {
+    return str;
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function addressCut(address: string, length = 6) {
+  return `${address.slice(0, length)}...${address.slice(-length)}`;
+}

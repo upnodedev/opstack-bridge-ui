@@ -67,10 +67,9 @@ const BrideWithdrawReviewModal = ({
     // if (txData.isETH) {
     await writeWithdrawETHAsync({
       args: {
-        to: txData.to,
+        to: address,
         amount: txData.amount,
         extraData: txData.calldata,
-        minGasLimit: 0,
       },
       l2ChainId: l2.id,
     });

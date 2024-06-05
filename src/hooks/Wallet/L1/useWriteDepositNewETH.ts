@@ -12,8 +12,8 @@ import { simulateContract } from "viem/actions";
 import { useConfig } from "wagmi";
 import { getPublicClient, getWalletClient } from "wagmi/actions";
 
-export const ABI = optimismPortalABI;
-export const FUNCTION = "depositTransaction";
+const ABI = optimismPortalABI;
+const FUNCTION = "depositTransaction";
 const gasLimit = 20000;
 const StandardBridgeABI = l1StandardBridgeABI;
 
@@ -71,7 +71,7 @@ export async function writeMutation(
   }: DepositETHMutationParameters,
 ) {
   const walletClient = await getWalletClient(config, { chainId: l1ChainId });
-  const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!;
+  // const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!;
   const l2PublicClient = await getPublicClient(config, { chainId: l2ChainId })!;
 
   const portal = validatePortalContract(l1ChainId, l2Chain).address;
@@ -108,51 +108,44 @@ export async function writeMutation(
     mint: args.amount ? args.amount : 0n,
   };
 
-  await simulateContract(walletClient, {
-    address: resolveAddress(l1StandartBridge),
-    abi: StandardBridgeABI,
-    functionName: 'depositETH',
-    args: [payload.gasLimit, payload.data],
-    value: payload.mint,
-    ...(rest as any),
-  });
-
-  return walletClient.writeContract({
-    address: resolveAddress(l1StandartBridge),
-    abi: StandardBridgeABI,
-    functionName: "depositETH",
-    args: [payload.gasLimit, payload.data],
-    value: payload.mint,
-    ...(rest as any),
-  });
-
   // await simulateContract(walletClient, {
-  //   address: resolveAddress(portal),
-  //   abi: ABI,
-  //   functionName: FUNCTION,
-  //   args: [
-  //     payload.to,
-  //     payload.value,
-  //     payload.gasLimit,
-  //     payload.isCreation,
-  //     payload.data,
-  //   ],
+  //   address: resolveAddress(l1StandartBridge),
+  //   abi: StandardBridgeABI,
+  //   functionName: "depositETH",
+  //   args: [payload.gasLimit, payload.data],
   //   value: payload.mint,
   //   ...(rest as any),
   // });
 
   // return walletClient.writeContract({
-  //   address: resolveAddress(portal),
-  //   abi: ABI,
-  //   functionName: FUNCTION,
-  //   args: [
-  //     payload.to,
-  //     payload.value,
-  //     payload.gasLimit,
-  //     payload.isCreation,
-  //     payload.data,
-  //   ],
+  //   address: resolveAddress(l1StandartBridge),
+  //   abi: StandardBridgeABI,
+  //   functionName: "depositETH",
+  //   args: [payload.gasLimit, payload.data],
   //   value: payload.mint,
   //   ...(rest as any),
   // });
+
+  console.log([
+    payload.to,
+    payload.value,
+    payload.gasLimit,
+    payload.isCreation,
+    payload.data,
+  ]);
+
+  return walletClient.writeContract({
+    address: resolveAddress(portal),
+    abi: ABI,
+    functionName: FUNCTION,
+    args: [
+      payload.to,
+      payload.value,
+      payload.gasLimit,
+      payload.isCreation,
+      payload.data,
+    ],
+    value: payload.mint,
+    ...(rest as any),
+  });
 }

@@ -21,6 +21,7 @@
     "@wagmi/core": "^2.9.0",
     "@web3modal/wagmi": "4.0.0-alpha.3",
     "antd": "^5.12.5",
+    "axios": "^1.7.2",
     "buffer-polyfill": "npm:buffer@^6.0.3",
     "ethers": "^6.11.0",
     "localforage": "^1.10.0",
@@ -37,8 +38,8 @@
     "sort-by": "^1.2.0",
     "styled-components": "^6.1.6",
     "twin.macro": "^3.4.1",
-    "viem": "^2.9.28",
-    "wagmi": "2.5.19"
+    "viem": "2.13.6",
+    "wagmi": "2.9.8"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

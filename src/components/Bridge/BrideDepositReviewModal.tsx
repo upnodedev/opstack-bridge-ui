@@ -10,6 +10,7 @@ import { useAccount, usePublicClient } from "wagmi";
 import { useWriteDepositETHNew } from "@hooks/Wallet/L1/useWriteDepositNewETH";
 import { useUsdtPrice } from "@hooks/useUsdtPrice";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { ERC20_DEPOSIT_MIN_GAS_LIMIT } from "@configs/bridge";
 
 interface Props extends SimpleComponent {
   l1: Chain;
@@ -88,9 +89,9 @@ export default function BrideDepositReviewModal({
     if (txData.isETH) {
       await writeDepositETHAsync({
         args: {
-          to: txData.to,
+          to: address,
           amount: txData.amount,
-          gasLimit: 20000,
+          gasLimit: ERC20_DEPOSIT_MIN_GAS_LIMIT,
         },
         l2ChainId: l2.id,
       });

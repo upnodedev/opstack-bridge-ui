@@ -20,6 +20,7 @@ import { useUsdtPrice } from "@hooks/useUsdtPrice";
 import { formatNumberStringComma } from "@utils/utils";
 import { useReadBalance } from "@hooks/useReadBalance";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 
 interface ReviewWithdrawDialogProps extends SimpleComponent {
   l1: Chain;
@@ -48,46 +49,46 @@ function BridgeReviewWithdraw({
 
   const [_, l2Token] = selectedTokenPair;
 
+  const { opConfig } = useOPWagmiConfig({
+    type: networkType,
+    chainId: l2.id,
+  });
+
+  const l2Chains = opConfig?.l2chains;
+
   const txData = useMemo(() => {
+    if (!l2Chains) {
+      throw new Error("Cannot find l2Chains");
+    }
+    const l2StandardBridgeAddress =
+      l2Chains[l2.id].l2Addresses.l2StandardBridge.address;
+    if (!l2StandardBridgeAddress) {
+      throw new Error(`Cannont find OptimismPortalProxy for chain id ${l2.id}`);
+    }
+
     const isETH = l2Token.extensions.opTokenId.toLowerCase() === "eth";
     const parsedAmount = isETH
       ? parseEther(amount ?? "0")
       : parseUnits(amount ?? "0", l2Token.decimals);
 
-    let calldata: Hash;
-
-    if (isETH) {
-      calldata = encodeFunctionData({
-        abi: l2StandardBridgeABI,
-        functionName: "withdraw",
-        args: [
-          predeploys.LegacyERC20ETH.address as Address,
-          parsedAmount,
-          0,
-          "0x",
-        ],
-      });
-    } else {
-      calldata = encodeFunctionData({
-        abi: l2StandardBridgeABI,
-        functionName: "withdrawTo",
-        args: [
-          l2Token.address,
-          predeploys.L2StandardBridge.address as Address,
-          parsedAmount,
-          0,
-          "0x",
-        ],
-      });
-    }
+    const calldata = encodeFunctionData({
+      abi: l2StandardBridgeABI,
+      functionName: "withdraw",
+      args: [
+        "0x0000000000000000000000000000000000000000",
+        parsedAmount,
+        20000,
+        "0x",
+      ],
+    });
 
     return {
-      to: predeploys.L2StandardBridge.address as Address,
+      to: l2StandardBridgeAddress,
       amount: parsedAmount,
       calldata: calldata,
       isETH,
     };
-  }, [amount, l2Token]);
+  }, [amount, l2Token, l2Chains, l2.id]);
 
   const gasEstimate = useEstimateGas({
     chainId: chain?.id,
@@ -96,6 +97,12 @@ function BridgeReviewWithdraw({
     value: txData.amount,
   });
 
+  console.log({
+    chainId: chain?.id,
+    data: txData.calldata,
+    to: txData.to,
+    value: txData.amount,
+  });
 
   const gasPrice = useMemo(() => {
     if (!gasEstimate.data || !estimateFeePerGas.data?.maxFeePerGas) {
@@ -178,7 +185,7 @@ function BridgeReviewWithdraw({
           disabled={disabled}
           onClick={reviewWithdraw}
         >
-          Review deposit
+          Review Withdrawal
         </ButtonStyled>
       </div>
     </BridgeReviewWithdrawWrapper>
