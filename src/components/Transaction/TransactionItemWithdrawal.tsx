@@ -8,7 +8,6 @@ import {
 } from "@hooks/Wallet/L2/useTransactionWithdrawETH";
 import { useL1PublicClient } from "@hooks/useL1PublicClient";
 import { useL2PublicClient } from "@hooks/useL2PublicClient";
-import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 import { Icon } from "@iconify/react";
@@ -27,8 +26,11 @@ import {
   getWithdrawals,
   walletActionsL1,
 } from "viem/op-stack";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { ReadContractErrorType, getWalletClient } from "wagmi/actions";
+import { TransactionWithdrawModal } from "./TransactionWithdrawModal";
+import { useAppDispatch } from "@states/hooks";
+import { ModalSlide } from "@states/modal/reducer";
 
 interface TransactionItemWithdrawalProps {
   data: withdrawalEvent;
@@ -42,27 +44,15 @@ export const TransactionItemWithdrawal = ({
   data,
   price,
 }: TransactionItemWithdrawalProps) => {
-  const { networkType, chainId } = useNetworkConfig();
-  const { address } = useAccount();
-
-  const { networkPair } = useOPNetwork({
-    type: networkType,
-    chainId: chainId,
-  });
+  const dispatch = useAppDispatch();
+  const { networkPair } = useOPNetwork();
   const { l1, l2 } = networkPair;
 
   const L1NetworkExplorerUrl = l1.blockExplorers?.default.url;
   const L2NetworkExplorerUrl = l2.blockExplorers?.default.url;
 
-  const { l2PublicClient } = useL2PublicClient({
-    type: networkType,
-    chainId: networkPair.l1.id,
-  });
-
-  const { l1PublicClient } = useL1PublicClient({
-    type: networkType,
-    chainId: networkPair.l1.id,
-  });
+  const { l2PublicClient } = useL2PublicClient();
+  const { l1PublicClient } = useL1PublicClient();
 
   const [receipt, setReceipt] = useState<TransactionReceipt>();
   const [status, setStatus] = useState("pending");
@@ -76,10 +66,16 @@ export const TransactionItemWithdrawal = ({
   const getAmountUsdt = () => (+amount * price).toFixed(2);
 
   const getReceipt = async () => {
-    if (data.transactionHash) {
-      const receipt = await l2PublicClient.getTransactionReceipt({
+    if (!data.transactionHash) return;
+    setAmount(getAmount(data.amount));
+    const receipt = await l2PublicClient
+      .getTransactionReceipt({
         hash: data.transactionHash as AddressType,
+      })
+      .catch((error) => {
+        setStatus("reverted");
       });
+    if (receipt) {
       // get Timestamp
       const block = await l2PublicClient.getBlock({
         blockNumber: BigInt(data.blockNumber),
@@ -87,107 +83,36 @@ export const TransactionItemWithdrawal = ({
       // console.log({block})
       const timestamp = block.timestamp * 1000n;
 
-      console.log(l1PublicClient.chain);
-      console.log(l2PublicClient.chain);
+      try {
+        const withdrawalStatus = await l1PublicClient.getWithdrawalStatus({
+          receipt,
+          targetChain: l2PublicClient.chain,
+          chain: l1PublicClient.chain,
+        });
+        setStatus(!receipt.transactionIndex ? "reverted" : withdrawalStatus);
+      } catch (error) {
+        setStatus("reverted");
+      }
 
-      const l2OutputOracleAddress =
-        l2PublicClient.chain.contracts.l2OutputOracle[l1.id].address;
-
-      const portalAddress =
-        l2PublicClient.chain.contracts.portal[l1.id].address;
-
-      const disputeGameFactory =
-        l2PublicClient.chain.contracts.disputeGameFactory[l1.id].address;
-
-      const withdrawalStatus = await getStatus(
-        l1PublicClient,
-        l2PublicClient,
-        receipt,
-        address as AddressType,
-      );
-
-      // const withdrawalStatus = await l1PublicClient.getWithdrawalStatus({
-      //   receipt,
-      //   targetChain: l2PublicClient.chain,
-      //   chain: l1PublicClient.chain,
-      // });
-
-      // console.log({ withdrawalStatus });
-
-      setStatus(!receipt.transactionIndex ? "pending" : receipt.status);
       setTimeLocal(new Date(Number(timestamp)).toLocaleString());
-      setAmount(getAmount(data.amount));
+
       setReceipt(receipt);
     }
   };
 
   useEffect(() => {
-    console.log({ data });
     getReceipt();
   }, []);
 
-  // const prove = async () => {
-  //   if (!opConfig) return;
-  //   const L1walletClient = (
-  //     await getWalletClient(opConfig, {
-  //       chainId: l1PublicClient.chain.id,
-  //     })
-  //   ).extend(walletActionsL1());
-  //   const { output, withdrawal } = await l1PublicClient.waitToProve({
-  //     receipt: data.receipt,
-  //     targetChain: l2PublicClient.chain,
-  //     chain: undefined,
-  //   });
-
-  //   // 2. Build parameters to prove the withdrawal on the L2.
-  //   const args = await l2PublicClient.buildProveWithdrawal({
-  //     output,
-  //     withdrawal,
-  //     chain: l2PublicClient.chain,
-  //   });
-
-  //   // 3. Prove the withdrawal on the L1.
-  //   const hash = await L1walletClient.proveWithdrawal(args);
-
-  //   // 4. Wait until the prove withdrawal is processed.
-  //   const receipt = await l1PublicClient.waitForTransactionReceipt({
-  //     hash,
-  //   });
-
-  //   console.log({ receipt });
-  // };
-
-  // const finalize = async () => {
-  //   if (!opConfig) return;
-  //   const L1walletClient = (
-  //     await getWalletClient(opConfig, {
-  //       chainId: l1PublicClient.chain.id,
-  //     })
-  //   ).extend(walletActionsL1());
-
-  //   // (Shortcut) Get withdrawals from receipt in Step 3.
-  //   const [withdrawal] = getWithdrawals(data.receipt);
-
-  //   // 1. Wait until the withdrawal is ready to finalize.
-  //   await l1PublicClient.waitToFinalize({
-  //     targetChain: l2PublicClient.chain,
-  //     withdrawalHash: withdrawal.withdrawalHash,
-  //     chain: undefined,
-  //   });
-
-  //   // 2. Finalize the withdrawal.
-  //   const hash = await L1walletClient.finalizeWithdrawal({
-  //     targetChain: l2PublicClient.chain,
-  //     withdrawal,
-  //   });
-
-  //   // 3. Wait until the finalize withdrawal is processed.
-  //   const receipt = await l1PublicClient.waitForTransactionReceipt({
-  //     hash,
-  //   });
-
-  //   console.log({ receipt });
-  // };
+  const openAction = () => {
+    dispatch(
+      ModalSlide.actions.openModal({
+        component: (
+          <TransactionWithdrawModal data={data} txId={txId} price={price} />
+        ),
+      }),
+    );
+  };
 
   const LinkTxComponent =
     L1NetworkExplorerUrl && L2NetworkExplorerUrl ? (
@@ -221,8 +146,9 @@ export const TransactionItemWithdrawal = ({
 
   return (
     <div
+      onClick={openAction}
       key={`deposit-${txId}`}
-      className="grid w-full grid-cols-4 bg-white py-2"
+      className="grid w-full cursor-pointer grid-cols-4 bg-white px-2 py-2 transition-all duration-200 ease-in-out hover:bg-gray-50"
     >
       <div className="col-span-2 gap-4">
         <div className="flex items-start gap-4">
@@ -248,7 +174,7 @@ export const TransactionItemWithdrawal = ({
         </div>
         <div className="flex items-center gap-2">
           <p className="m-0 text-xs text-gray-medium">Chain : </p>
-          <TokenImg name={"ETH"} />
+          <TokenImg name={l2.nativeCurrency.symbol} />
           <div className="text-xs">{l2.name}</div>
         </div>
       </div>

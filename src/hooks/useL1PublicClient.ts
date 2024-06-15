@@ -3,29 +3,34 @@ import { usePublicClient } from "wagmi";
 import { useOPNetwork } from "./useOPNetwork";
 import { NetworkType } from "@utils/opType";
 import { type UsePublicClientReturnType } from "wagmi";
-import { PublicActionsL1, publicActionsL1 } from 'viem/op-stack'
-import { Account, Chain } from "viem";
+import { PublicActionsL1, publicActionsL1 } from "viem/op-stack";
+import { createPublicClient, http } from "viem";
 
 export type UseL1PublicClientArgs = {
   chainId?: number;
   type: NetworkType;
 };
 
-export type l1PublicClientType = Exclude<UsePublicClientReturnTypeL1, undefined>
+export type l1PublicClientType = Exclude<
+  UsePublicClientReturnTypeL1,
+  undefined
+>;
 
-export type UsePublicClientReturnTypeL1 = UsePublicClientReturnType & PublicActionsL1;
+export type UsePublicClientReturnTypeL1 = UsePublicClientReturnType &
+  PublicActionsL1;
 
-export type UseL1PublicClientReturnType = (args: UseL1PublicClientArgs) => {
-  l1PublicClient: l1PublicClientType;
+export type UseL1PublicClientReturnType = {
+  l1PublicClient: Exclude<UsePublicClientReturnTypeL1, undefined>;
 };
 
-export const useL1PublicClient: UseL1PublicClientReturnType = ({
-  type,
-  chainId,
-}: UseL1PublicClientArgs) => {
-  const { networkPair } = useOPNetwork({ type, chainId });
-  const l1PublicClient = usePublicClient({ chainId: networkPair?.l1.id })!.extend(publicActionsL1());
-
-
+export const useL1PublicClient = (): UseL1PublicClientReturnType => {
+  const { networkPair } = useOPNetwork();
+  // const l1PublicClient = usePublicClient({
+  //   chainId: networkPair?.l1.id,
+  // })!.extend(publicActionsL1()) as any;
+  const l1PublicClient = createPublicClient({
+    chain: networkPair.l1,
+    transport: http(),
+  }).extend(publicActionsL1());
   return { l1PublicClient };
 };

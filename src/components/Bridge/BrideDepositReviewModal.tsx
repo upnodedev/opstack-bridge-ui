@@ -25,7 +25,6 @@ interface Props extends SimpleComponent {
   selectedTokenPair: [Token, Token];
   gasPrice: bigint;
   onSubmit?: () => void;
-  networkType: NetworkType;
 }
 
 export default function BrideDepositReviewModal({
@@ -35,7 +34,6 @@ export default function BrideDepositReviewModal({
   selectedTokenPair,
   gasPrice,
   onSubmit,
-  networkType,
 }: Props) {
   const dispatch = useAppDispatch();
 
@@ -57,10 +55,7 @@ export default function BrideDepositReviewModal({
   };
 
   const { address, chain } = useAccount();
-  const { opConfig } = useOPWagmiConfig({
-    type: networkType,
-    chainId: chain?.id,
-  });
+  const { opConfig } = useOPWagmiConfig();
 
   const l1PublicClient = usePublicClient({ chainId: l1.id });
 

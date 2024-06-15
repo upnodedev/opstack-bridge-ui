@@ -1,7 +1,6 @@
 import { StatusChain } from "@components/Chain/StatusChain";
 import TokenImg from "@components/TokenImg";
 import { useL1PublicClient } from "@hooks/useL1PublicClient";
-import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { Icon } from "@iconify/react";
 import { AddressType, depositEvent } from "@types";
@@ -27,21 +26,13 @@ export const TransactionItemDeposit = ({
   data,
   price,
 }: TransactionItemDepositProps) => {
-  const { networkType, chainId } = useNetworkConfig();
-
-  const { networkPair } = useOPNetwork({
-    type: networkType,
-    chainId: chainId,
-  });
+  const { networkPair } = useOPNetwork();
   const { l1, l2 } = networkPair;
 
   const L1NetworkExplorerUrl = l1.blockExplorers?.default.url;
   const L2NetworkExplorerUrl = l2.blockExplorers?.default.url;
 
-  const { l1PublicClient } = useL1PublicClient({
-    type: networkType,
-    chainId: networkPair.l1.id,
-  });
+  const { l1PublicClient } = useL1PublicClient();
 
   const [receipt, setReceipt] = useState<TransactionReceipt>();
   const [status, setStatus] = useState("pending");

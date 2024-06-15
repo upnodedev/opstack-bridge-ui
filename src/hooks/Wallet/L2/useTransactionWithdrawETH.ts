@@ -7,7 +7,6 @@ import {
   l2PublicClientType,
   useL2PublicClient,
 } from "@hooks/useL2PublicClient";
-import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useOPWagmiConfig } from "@hooks/useOPWagmiConfig";
 import { AddressType } from "@types";
@@ -25,7 +24,7 @@ import {
   parseAbiItem,
 } from "viem";
 import { GetGameErrorType, getWithdrawals } from "viem/op-stack";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 
 export type TransactionWithdrawalTopicType = {
   amount: bigint;
@@ -60,26 +59,14 @@ export type TransactionWithdrawalType = {
 export default function useTransactionWithdrawETH() {
   const [logs, setLogs] = useState<TransactionWithdrawalType[]>([]);
   const [loading, setLoading] = useState(true);
-  const { chainId, networkType } = useNetworkConfig();
-  const { opConfig } = useOPWagmiConfig({
-    type: networkType,
-    chainId: chainId,
-  });
+  const chainId = useChainId();
+  const { opConfig } = useOPWagmiConfig();
 
-  const { networkPair } = useOPNetwork({
-    type: networkType,
-    chainId: chainId,
-  });
+  const { networkPair } = useOPNetwork();
 
   const { address } = useAccount();
-  const { l1PublicClient } = useL1PublicClient({
-    type: networkType,
-    chainId: networkPair.l1.id,
-  });
-  const { l2PublicClient } = useL2PublicClient({
-    type: networkType,
-    chainId: networkPair.l2.id,
-  });
+  const { l1PublicClient } = useL1PublicClient();
+  const { l2PublicClient } = useL2PublicClient();
   const l1ChainId = networkPair.l1.id;
   const l2Chain = networkPair.l2;
 
@@ -324,8 +311,15 @@ export const getStatus = async (
   receipt: TransactionReceipt,
   address: AddressType,
 ) => {
+  console.log({
+    l1PublicClient,
+    l2PublicClient,
+  });
+  console.log({ t: l1PublicClient.chain.id });
   const portalAddress =
     l2PublicClient.chain.contracts.portal[l1PublicClient.chain.id].address;
+
+  console.log({ portalAddress });
 
   const [withdrawal] = getWithdrawals(receipt);
 

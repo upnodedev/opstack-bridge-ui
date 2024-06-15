@@ -24,7 +24,7 @@ export const ModalSlide = createSlice({
     closeModal: (state) => {
       state.open = false;
       state.component = null;
-      state.props = null;
+      // state.props = null;
     },
   },
 });

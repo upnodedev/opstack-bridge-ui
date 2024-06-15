@@ -35,7 +35,6 @@ export type ReviewDepositDialogProps = {
   selectedTokenPair: [Token, Token];
   disabled?: boolean;
   onSubmit?: () => void;
-  networkType: NetworkType;
 };
 
 export type ReviewDepositDialogContent = {
@@ -62,16 +61,12 @@ function BridgeReviewDeposit({
   disabled,
   selectedTokenPair,
   onSubmit,
-  networkType,
 }: ReviewDepositDialogProps) {
   const dispatch = useAppDispatch();
   const { address, chain } = useAccount();
   const estimateFeePerGas = useEstimateFeesPerGas({ chainId: chain?.id });
 
-  const { opConfig } = useOPWagmiConfig({
-    type: networkType,
-    chainId: l2.id,
-  });
+  const { opConfig } = useOPWagmiConfig();
 
   const l2Chains = opConfig?.l2chains;
 
@@ -94,10 +89,7 @@ function BridgeReviewDeposit({
       calldata = encodeFunctionData({
         abi: l1StandardBridgeABI,
         functionName: "depositETH",
-        args: [
-          ERC20_DEPOSIT_MIN_GAS_LIMIT,
-          "0x",
-        ],
+        args: [ERC20_DEPOSIT_MIN_GAS_LIMIT, "0x"],
       });
     } else {
       calldata = encodeFunctionData({
@@ -147,7 +139,6 @@ function BridgeReviewDeposit({
             selectedTokenPair={selectedTokenPair}
             gasPrice={gasPrice}
             onSubmit={onSubmit}
-            networkType={networkType}
           />
         ),
       }),

@@ -3,18 +3,13 @@ import { useConfig } from "wagmi";
 
 // import { deploymentAddresses } from "../configs/deploymentAddresses";
 import { useOPNetwork } from "./useOPNetwork";
-import { NetworkType, OpConfig } from "@utils/opType";
+import { OpConfig } from "@utils/opType";
 // import { predeploys } from "@abi/constant";
 import ENV from "@configs/ENV";
 
-export type UseOPWagmiConfigArgs = {
-  type: NetworkType;
-  chainId?: number;
-};
-
-export const useOPWagmiConfig = ({ type, chainId }: UseOPWagmiConfigArgs) => {
+export const useOPWagmiConfig = () => {
   const config = useConfig();
-  const { networkPair } = useOPNetwork({ type, chainId });
+  const { networkPair } = useOPNetwork();
 
   const opConfig = useMemo<OpConfig | undefined>(() => {
     if (!networkPair) {

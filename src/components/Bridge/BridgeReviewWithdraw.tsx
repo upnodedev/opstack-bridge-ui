@@ -29,7 +29,6 @@ interface ReviewWithdrawDialogProps extends SimpleComponent {
   selectedTokenPair: [Token, Token];
   disabled?: boolean;
   onSubmit?: () => void;
-  networkType: NetworkType;
 }
 
 const BridgeReviewWithdrawWrapper = styled.div``;
@@ -41,7 +40,6 @@ function BridgeReviewWithdraw({
   disabled,
   selectedTokenPair,
   onSubmit,
-  networkType,
 }: ReviewWithdrawDialogProps) {
   const dispatch = useAppDispatch();
   const { chain, address } = useAccount();
@@ -49,10 +47,7 @@ function BridgeReviewWithdraw({
 
   const [_, l2Token] = selectedTokenPair;
 
-  const { opConfig } = useOPWagmiConfig({
-    type: networkType,
-    chainId: l2.id,
-  });
+  const { opConfig } = useOPWagmiConfig();
 
   const l2Chains = opConfig?.l2chains;
 
@@ -122,7 +117,6 @@ function BridgeReviewWithdraw({
             selectedTokenPair={selectedTokenPair}
             gasPrice={gasPrice}
             onSubmit={onSubmit}
-            networkType={networkType}
           />
         ),
       }),

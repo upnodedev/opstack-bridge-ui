@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { TransactionItemDeposit } from "./TransactionItemDeposit";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useOPNetwork } from "@hooks/useOPNetwork";
-import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { useUsdtPrice } from "@hooks/useUsdtPrice";
 import { TransactionItemWithdrawal } from "./TransactionItemWithdrawal";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { axiosInstance } from "@utils/api";
 import { useEffect, useState } from "react";
 import { depositEvent, withdrawalEvent } from "@types";
@@ -19,13 +18,9 @@ interface Props extends SimpleComponent {
 const TransactionContainerWrapper = styled.div``;
 
 function TransactionContainer({ action }: Props) {
-  const { networkType, chainId } = useNetworkConfig();
   const { address } = useAccount();
 
-  const { networkPair } = useOPNetwork({
-    type: networkType,
-    chainId: chainId,
-  });
+  const { networkPair } = useOPNetwork();
   const { l1, l2 } = networkPair;
 
   const [withdrawLogs, setWithdrawLogs] = useState<withdrawalEvent[]>([]);

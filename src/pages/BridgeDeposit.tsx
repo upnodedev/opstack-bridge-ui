@@ -7,7 +7,6 @@ import { useConfig } from "wagmi";
 import { useOPNetwork } from "@hooks/useOPNetwork";
 import { useOPTokens } from "@hooks/useOPTokens";
 import BridgeReviewButton from "@components/Bridge/BridgeReviewButton";
-import { useNetworkConfig } from "@hooks/useNetworkConfig";
 import { Token } from "@utils/opType";
 
 const BridgeWrapper = styled.div``;
@@ -17,7 +16,6 @@ interface Props extends SimpleComponent {
 }
 
 function BridgeDeposit({ action }: Props) {
-  const { networkType, chainId } = useNetworkConfig();
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [validationError, setValidationError] = useState<string | undefined>(
     undefined,
@@ -31,10 +29,7 @@ function BridgeDeposit({ action }: Props) {
   // new bie
   const config = useConfig();
 
-  const { networkPair } = useOPNetwork({
-    type: networkType,
-    chainId: chainId ?? config.chains[0].id,
-  });
+  const { networkPair } = useOPNetwork();
   const { l1, l2 } = networkPair;
 
   const { ethToken: l1EthToken } = useOPTokens({ chainId: networkPair.l1.id });
@@ -54,7 +49,7 @@ function BridgeDeposit({ action }: Props) {
   );
 
   return (
-    <BridgeWrapper className="flex justify-center w-full py-8">
+    <BridgeWrapper className="flex w-full justify-center py-8">
       <div className="w-[40rem]">
         <div className="text-md flex gap-2">
           <Icon icon={"akar-icons:arrow-left"} />
@@ -86,7 +81,6 @@ function BridgeDeposit({ action }: Props) {
               selectedTokenPair={selectedTokenPair}
               validationError={validationError}
               onSubmit={onSubmit}
-              networkType={networkType}
             />
           </div>
         </div>

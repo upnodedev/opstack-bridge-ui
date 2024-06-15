@@ -24,7 +24,6 @@ export type ReviewWithdrawalDialogContent = {
   selectedTokenPair: [Token, Token];
   gasPrice: bigint;
   onSubmit?: () => void;
-  networkType: NetworkType;
 };
 // BrideWithdrawReviewModal
 const BrideWithdrawReviewModal = ({
@@ -33,14 +32,10 @@ const BrideWithdrawReviewModal = ({
   selectedTokenPair,
   gasPrice,
   onSubmit,
-  networkType,
 }: ReviewWithdrawalDialogContent) => {
   const { address, chain } = useAccount();
 
-  const { opConfig } = useOPWagmiConfig({
-    type: networkType,
-    chainId: chain?.id,
-  });
+  const { opConfig } = useOPWagmiConfig();
 
   const l2PublicClient = usePublicClient({ chainId: l2.id });
 

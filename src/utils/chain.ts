@@ -1,7 +1,7 @@
 import ENV from "@configs/ENV";
 import { createPublicClient, http } from "viem";
 import type { Chain } from "viem/chains";
-// import { sepolia, optimism,base } from "viem/chains";
+// import { mainnet, optimism } from "viem/chains";
 
 // clone of mainnet and edit the chainId
 export const l1ChainConfig: Chain = {
