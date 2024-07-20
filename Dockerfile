@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine as build
+FROM node:20-alpine
 WORKDIR /app
 
 RUN apk add g++ make py3-pip
@@ -11,21 +11,11 @@ RUN yarn install
 # Copy source files
 COPY . .
 
-# Build the application
-RUN yarn build
-
-# Production stage
-FROM node:20-alpine as production
-WORKDIR /app
-
 # Install 'serve' to run the application
 RUN yarn global add serve
-
-# Copy build artifacts from the 'build' stage
-COPY --from=build /app/dist ./dist
 
 # Expose the port serve runs on
 EXPOSE 3333
 
-# Command to serve the application
-CMD ["serve", "-s", "dist", "-l", "tcp://0.0.0.0:3333"]
+# Command to build and serve the application
+CMD ["sh", "-c", "yarn build && serve -s dist -l tcp://0.0.0.0:3333"]
